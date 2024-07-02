@@ -13,6 +13,12 @@
         {
           "origin": "https://n"
         }
+      ],
+      [
+        "expo-asset",
+        {
+          "assets": ["./src/assets/auth/Star.png"]
+        }
       ]
     ],
     "name": "Lou-Mobile",

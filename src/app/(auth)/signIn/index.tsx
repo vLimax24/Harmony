@@ -1,50 +1,73 @@
+import { useSignIn } from "@clerk/clerk-expo";
+import { Link, useRouter } from "expo-router";
+import { Text, TextInput, Button, View } from "react-native";
 import React from "react";
-import * as WebBrowser from "expo-web-browser";
-import { Text, View, Button } from "react-native";
-import { Link } from "expo-router";
-import { useOAuth } from "@clerk/clerk-expo";
-import * as Linking from "expo-linking"
+import { GoogleAuth } from "@/components/auth/oAuth/GoogleAuth";
+import { AppleAuth } from "@/components/auth/oAuth/AppleAuth";
 
-export const useWarmUpBrowser = () => {
-  React.useEffect(() => {
-    // Warm up the android browser to improve UX
-    // https://docs.expo.dev/guides/authentication/#improving-user-experience
-    void WebBrowser.warmUpAsync();
-    return () => {
-      void WebBrowser.coolDownAsync();
-    };
-  }, []);
-};
+export default function Page() {
+  const { signIn, setActive, isLoaded } = useSignIn();
+  const router = useRouter();
 
-WebBrowser.maybeCompleteAuthSession();
+  const [emailAddress, setEmailAddress] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
-const SignInWithOAuth = () => {
-  useWarmUpBrowser();
-
-  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
-
-  const onPress = React.useCallback(async () => {
-    try {
-      const { createdSessionId, signIn, signUp, setActive } =
-        await startOAuthFlow({ redirectUrl: Linking.createURL("/dashboard", { scheme: "myapp" })});
-
-      if (createdSessionId) {
-        setActive!({ session: createdSessionId });
-      } else {
-        // Use signIn or signUp for next steps such as MFA
-      }
-    } catch (err) {
-      console.error("OAuth error", err);
+  const onSignInPress = React.useCallback(async () => {
+    if (!isLoaded) {
+      return;
     }
-  }, []);
+
+    try {
+      const signInAttempt = await signIn.create({
+        identifier: emailAddress,
+        password,
+      });
+
+      if (signInAttempt.status === "complete") {
+        await setActive({ session: signInAttempt.createdSessionId });
+        router.replace("/dashboard");
+      } else {
+        // See https://clerk.com/docs/custom-flows/error-handling
+        // for more info on error handling
+        console.error(JSON.stringify(signInAttempt, null, 2));
+      }
+    } catch (err: any) {
+      console.error(JSON.stringify(err, null, 2));
+    }
+  }, [isLoaded, emailAddress, password]);
 
   return (
-    <View>
-      <Link href="/">
-        <Text>Home</Text>
-      </Link>
-      <Button title="Sign in with Google" onPress={onPress} />
+    <View className="p-8">
+      <TextInput
+        autoCapitalize="none"
+        value={emailAddress}
+        placeholder="Email..."
+        onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
+        className="mb-2"
+      />
+      <TextInput
+        value={password}
+        placeholder="Password..."
+        secureTextEntry={true}
+        onChangeText={(password) => setPassword(password)}
+        className="mb-2"
+      />
+      <Button title="Sign In" onPress={onSignInPress} />
+      <View>
+        <Text>Don't have an account?</Text>
+        <Link href="/sign-up">
+          <Text className="text-blue-500">Sign up</Text>
+        </Link>
+      </View>
+      <View className="flex flex-row items-center my-4">
+        <View className="flex-1 h-0.5 bg-black" />
+        <Text className="mx-2">or</Text>
+        <View className="flex-1 h-0.5 bg-black" />
+      </View>
+      <View className="flex flex-row gap-2">
+        <GoogleAuth />
+        <AppleAuth />
+      </View>
     </View>
   );
-};
-export default SignInWithOAuth;
+}
