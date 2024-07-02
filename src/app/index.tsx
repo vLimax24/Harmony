@@ -1,12 +1,19 @@
 import { Link, router } from "expo-router";
 import React, { useRef } from "react";
-import { Text, View, TouchableOpacity, Image } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  ImageBackground,
+} from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { X } from "lucide-react-native";
 import { Button } from "@/components/ui/Button";
 import { Apple } from "@/assets/Icons/Apple";
 import { Google } from "@/assets/Icons/Google";
 import { i18n } from "@/lib/i18n";
+import { StatusBar } from "expo-status-bar";
 
 export default function Page() {
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -15,9 +22,23 @@ export default function Page() {
   const handleOpenPress = () => bottomSheetRef.current?.expand();
 
   const snapPoints = ["55%"];
+
   return (
-    <View className="flex flex-1 items-center justify-center bg-gray-600 pt-8 px-4">
-      <Text className="text-white text-xl">Welcome to Lou</Text>
+    <ImageBackground
+      source={require("../assets/auth/WelcomePage.png")}
+      className="flex-1 px-4 items-start pt-8 justify-end flex-col"
+      style={{
+        justifyContent: "flex-end",
+        paddingBottom: 20,
+        zIndex: -10,
+      }}
+      resizeMode="cover"
+    >
+      <StatusBar
+        translucent={true}
+        backgroundColor="transparent"
+        style="dark"
+      />
       <BottomSheet
         snapPoints={snapPoints}
         ref={bottomSheetRef}
@@ -75,13 +96,12 @@ export default function Page() {
           </View>
         </BottomSheetView>
       </BottomSheet>
-
-      <Button
-        onPress={handleOpenPress}
-        className="-z-10 mt-4 bg-primary w-full"
-      >
-        <Text className="text-white text-lg">Get Started</Text>
-      </Button>
-    </View>
+      <View className="w-full" style={{ zIndex: -1 }}>
+        <Text className="text-4xl font-bold">Welcome to Lou!</Text>
+        <Button onPress={handleOpenPress} className="mt-4 bg-primary w-full">
+          <Text className="text-white text-lg font-bold">Get Started</Text>
+        </Button>
+      </View>
+    </ImageBackground>
   );
 }

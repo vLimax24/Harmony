@@ -17,7 +17,7 @@ const Button = ({
 }: Props) => {
   return (
     <TouchableOpacity
-      className={`py-4 px-4 rounded-lg flex items-center justify-center ${className}`}
+      className={`py-4 px-4 rounded-2xl flex items-center justify-center ${className}`}
       onPress={onPress}
       {...rest}
     >
