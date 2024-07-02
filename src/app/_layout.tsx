@@ -9,6 +9,7 @@ import { getLocales } from "expo-localization";
 import { I18n } from "i18n-js";
 import English from "../translations/en.json";
 import German from "../translations/de.json";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const i18n = new I18n({
   en: English,
@@ -45,7 +46,9 @@ export default function Layout() {
     >
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
         <ClerkLoaded>
-          <Slot />
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <Slot />
+          </GestureHandlerRootView>
         </ClerkLoaded>
       </ConvexProviderWithClerk>
       <StatusBar style="auto" />
