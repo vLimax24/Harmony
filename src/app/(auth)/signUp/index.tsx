@@ -1,6 +1,7 @@
 import * as React from "react";
-import { TextInput, Button, View } from "react-native";
+import { TextInput, Button, View, Text } from "react-native";
 import { useSignUp } from "@clerk/clerk-expo";
+import { ClerkAPIError } from "@clerk/types";
 import { useRouter } from "expo-router";
 
 export default function SignUpScreen() {
@@ -11,6 +12,7 @@ export default function SignUpScreen() {
   const [password, setPassword] = React.useState("");
   const [pendingVerification, setPendingVerification] = React.useState(false);
   const [code, setCode] = React.useState("");
+  const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
 
   const onSignUpPress = async () => {
     if (!isLoaded) {
@@ -27,8 +29,11 @@ export default function SignUpScreen() {
 
       setPendingVerification(true);
     } catch (err: any) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
+      const errorMessages: { [key: string]: string } = {};
+      err.errors.forEach((error: ClerkAPIError) => {
+        errorMessages[error.meta.paramName] = error.message;
+      });
+      setErrors(errorMessages);
       console.error(JSON.stringify(err, null, 2));
     }
   };
@@ -50,8 +55,6 @@ export default function SignUpScreen() {
         console.error(JSON.stringify(completeSignUp, null, 2));
       }
     } catch (err: any) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
       console.error(JSON.stringify(err, null, 2));
     }
   };
@@ -64,14 +67,28 @@ export default function SignUpScreen() {
             autoCapitalize="none"
             value={emailAddress}
             placeholder="Email..."
-            onChangeText={(email) => setEmailAddress(email)}
+            onChangeText={(email) => {
+              setEmailAddress(email);
+              setErrors((prev) => ({ ...prev, email_address: "" }));
+            }}
           />
+          {errors.email_address && (
+            <Text className="text-red-500">{errors.email_address}</Text>
+          )}
+
           <TextInput
             value={password}
             placeholder="Password..."
             secureTextEntry={true}
-            onChangeText={(password) => setPassword(password)}
+            onChangeText={(password) => {
+              setPassword(password);
+              setErrors((prev) => ({ ...prev, password: "" }));
+            }}
           />
+          {errors.password && (
+            <Text className="text-red-500">{errors.password}</Text>
+          )}
+
           <Button title="Sign Up" onPress={onSignUpPress} />
         </>
       )}

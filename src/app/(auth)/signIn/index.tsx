@@ -4,6 +4,7 @@ import { Text, TextInput, Button, View } from "react-native";
 import React from "react";
 import { GoogleAuth } from "@/components/auth/oAuth/GoogleAuth";
 import { AppleAuth } from "@/components/auth/oAuth/AppleAuth";
+import { ClerkAPIError } from "@clerk/types";
 
 export default function Page() {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -11,6 +12,7 @@ export default function Page() {
 
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
 
   const onSignInPress = React.useCallback(async () => {
     if (!isLoaded) {
@@ -27,12 +29,13 @@ export default function Page() {
         await setActive({ session: signInAttempt.createdSessionId });
         router.replace("/dashboard");
       } else {
-        // See https://clerk.com/docs/custom-flows/error-handling
-        // for more info on error handling
-        console.error(JSON.stringify(signInAttempt, null, 2));
       }
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2));
+      const errorMessages: { [key: string]: string } = {};
+      err.errors.forEach((error: ClerkAPIError) => {
+        errorMessages[error.meta.paramName] = error.message;
+      });
+      setErrors(errorMessages);
     }
   }, [isLoaded, emailAddress, password]);
 
@@ -42,16 +45,30 @@ export default function Page() {
         autoCapitalize="none"
         value={emailAddress}
         placeholder="Email..."
-        onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
+        onChangeText={(emailAddress) => {
+          setEmailAddress(emailAddress);
+          setErrors((prev) => ({ ...prev, identifier: "" }));
+        }}
         className="mb-2"
       />
+      {errors.identifier && (
+        <Text className="text-red-500">{errors.identifier}</Text>
+      )}
+
       <TextInput
         value={password}
         placeholder="Password..."
         secureTextEntry={true}
-        onChangeText={(password) => setPassword(password)}
+        onChangeText={(password) => {
+          setPassword(password);
+          setErrors((prev) => ({ ...prev, password: "" }));
+        }}
         className="mb-2"
       />
+      {errors.password && (
+        <Text className="text-red-500">{errors.password}</Text>
+      )}
+
       <Button title="Sign In" onPress={onSignInPress} />
       <View>
         <Text>Don't have an account?</Text>

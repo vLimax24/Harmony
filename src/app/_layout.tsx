@@ -1,5 +1,5 @@
 import "../global.css";
-import { Slot } from "expo-router";
+import { Redirect, Slot } from "expo-router";
 import { ClerkProvider, useAuth, ClerkLoaded } from "@clerk/clerk-expo";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
@@ -25,7 +25,6 @@ const tokenCache = {
     }
   },
 };
-
 export default function Layout() {
   return (
     <ClerkProvider
@@ -35,7 +34,7 @@ export default function Layout() {
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
         <ClerkLoaded>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <Slot />
+            <Slot initialRouteName="/welcome" />
           </GestureHandlerRootView>
         </ClerkLoaded>
       </ConvexProviderWithClerk>

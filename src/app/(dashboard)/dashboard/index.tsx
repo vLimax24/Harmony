@@ -9,7 +9,7 @@ export default function Page() {
   const { signOut } = useAuth();
   const handleSignOut = async () => {
     await signOut();
-    router.push("/");
+    router.push("/welcome");
   };
   return (
     <View className="flex flex-1 items-center justify-center">
