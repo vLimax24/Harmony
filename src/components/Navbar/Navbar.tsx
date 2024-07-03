@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 import {
   BadgePercent,
   CircleUser,
@@ -26,32 +26,39 @@ const Navbar = () => {
 
   return (
     <View className="flex-row items-center justify-around pt-4 pb-6 bg-gray-200">
-      <TouchableOpacity onPress={() => handleTabPress("Home")}>
+      <TouchableOpacity
+        onPress={() => handleTabPress("Home")}
+        className="flex items-center justify-center"
+      >
         <Home color={`${activeTab === "Home" ? "#22c55e" : "#5f6b85"}`} />
+        <Text className="m-0 text-[10px] font-bold text-gray-500">Home</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => handleTabPress("Offer")}
-        className={`${activeTab === "Auth"}`}
+        className="flex items-center justify-center"
       >
         <BadgePercent
           color={`${activeTab === "Offer" ? "#22c55e" : "#5f6b85"}`}
         />
+        <Text className="m-0 text-[10px] font-bold text-gray-500">Home</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => handleTabPress("Login")}
-        className={`${activeTab === "Login"}`}
+        className="flex items-center justify-center"
       >
         <CookingPot
           color={`${activeTab === "Login" ? "#22c55e" : "#5f6b85"}`}
         />
+        <Text className="m-0 text-[10px] font-bold text-gray-500">Home</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => handleTabPress("Profile")}
-        className={`${activeTab === "List"}`}
+        className="flex items-center justify-center"
       >
         <CircleUser
           color={`${activeTab === "Profile" ? "#22c55e" : "#5f6b85"}`}
         />
+        <Text className="m-0 text-[10px] font-bold text-gray-500">Profile</Text>
       </TouchableOpacity>
     </View>
   );
