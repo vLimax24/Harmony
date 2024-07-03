@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
+  Platform,
 } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { X } from "lucide-react-native";
@@ -14,6 +15,8 @@ import { Apple } from "@/assets/Icons/Apple";
 import { Google } from "@/assets/Icons/Google";
 import { i18n } from "@/lib/i18n";
 import { StatusBar } from "expo-status-bar";
+import { GoogleAuth } from "@/components/auth/oAuth/GoogleAuth";
+import { AppleAuth } from "@/components/auth/oAuth/AppleAuth";
 
 export default function Page() {
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -24,26 +27,40 @@ export default function Page() {
   const snapPoints = ["55%"];
 
   return (
-    <ImageBackground
-      source={require("../assets/auth/WelcomePage.png")}
-      className="flex-1 px-4 items-start pt-8 justify-end flex-col"
-      style={{
-        justifyContent: "flex-end",
-        paddingBottom: 20,
-        zIndex: -10,
-      }}
-      resizeMode="cover"
-    >
-      <StatusBar
-        translucent={true}
-        backgroundColor="transparent"
-        style="dark"
-      />
+    <View className="flex-1">
+      <ImageBackground
+        source={require("../assets/auth/WelcomePage.png")}
+        className="flex-1 px-4 items-start pt-8 justify-end flex-col"
+        style={{
+          justifyContent: "flex-end",
+          paddingBottom: 20,
+        }}
+        resizeMode="cover"
+      >
+        <StatusBar
+          translucent={true}
+          backgroundColor="transparent"
+          style="dark"
+        />
+        <View className="w-full">
+          <Text className="text-4xl font-bold">
+            {i18n.t("Onboarding.welcomeMessage")}
+          </Text>
+          <Button onPress={handleOpenPress} className="mt-4 bg-primary w-full">
+            <Text className="text-white text-lg font-bold">
+              {i18n.t("Onboarding.getStarted")}
+            </Text>
+          </Button>
+        </View>
+      </ImageBackground>
       <BottomSheet
         snapPoints={snapPoints}
         ref={bottomSheetRef}
         enablePanDownToClose={true}
         index={-1}
+        style={{
+          elevation: Platform.OS === "android" ? 50 : 0,
+        }}
       >
         <BottomSheetView className="px-8 py-3 justify-between h-[90%]">
           <View>
@@ -86,22 +103,12 @@ export default function Page() {
               {i18n.t("Onboarding.signIn")}
             </Button>
             <View className="flex-row w-full gap-1">
-              <Button className="bg-[#eeebee] flex-1">
-                <Google />
-              </Button>
-              <Button className="bg-[#eeebee] flex-1">
-                <Apple />
-              </Button>
+              <GoogleAuth />
+              <AppleAuth />
             </View>
           </View>
         </BottomSheetView>
       </BottomSheet>
-      <View className="w-full" style={{ zIndex: -1 }}>
-        <Text className="text-4xl font-bold">Welcome to Lou!</Text>
-        <Button onPress={handleOpenPress} className="mt-4 bg-primary w-full">
-          <Text className="text-white text-lg font-bold">Get Started</Text>
-        </Button>
-      </View>
-    </ImageBackground>
+    </View>
   );
 }
