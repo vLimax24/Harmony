@@ -5,5 +5,11 @@
     "getStartedDescription": "Beginne deine Reise mit Lou, dem modernsten Dashboard, um deine Schule zu verwalten.",
     "signIn": "Anmelden",
     "signUp": "Registrieren"
+  },
+  "Navbar": {
+    "home": "Home",
+    "statistics": "Statistiken",
+    "profile": "Profil",
+    "groups": "Gruppen"
   }
 }
