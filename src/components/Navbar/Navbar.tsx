@@ -20,23 +20,25 @@ const Navbar = () => {
       setActiveTab("Profile");
     } else if (pathname === "/dashboard") {
       setActiveTab("Home");
-    } else if (pathname === "dashboard/groups") {
+    } else if (pathname === "/dashboard/groups") {
       setActiveTab("Groups");
-    } else if (pathname === "dashboard/statistics") {
+    } else if (pathname === "/dashboard/statistics") {
       setActiveTab("Statistics");
     }
   }, [pathname]);
 
-  const handleTabPress = (tab) => {
+  const handleTabPress = (
+    tab: "Home" | "Groups" | "Statistics" | "Profile"
+  ) => {
     router.push(
       tab === "Profile"
         ? "/dashboard/profile"
         : tab === "Home"
         ? "/dashboard"
         : tab === "Groups"
-        ? "dashboard/groups"
+        ? "/dashboard/groups"
         : tab === "Statistics"
-        ? "dashboard/statistics"
+        ? "/dashboard/statistics"
         : "/dashboard"
     );
   };
