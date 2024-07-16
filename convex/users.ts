@@ -47,7 +47,6 @@ export const createUser = internalMutation({
       clerkId: args.clerkId,
       profileImage: args.profileImage,
       name: args.name,
-      last_seen: Date.now(),
     })
   },
 })
@@ -63,57 +62,6 @@ export const deleteUser = internalMutation({
     if (!user) return
 
     await ctx.db.delete(user._id)
-  },
-})
-
-export const updateLastSeenOnline = mutation({
-  args: {
-    id: v.id("users"),
-  },
-  handler: async (ctx, args) => {
-    try {
-      await ctx.db.patch(args.id, {
-        last_seen: Date.now(),
-      })
-    } catch (error) {
-      console.log(error)
-    }
-  },
-})
-
-export const checkIfInactive = mutation({
-  args: {
-    documentId: v.id("documents"),
-  },
-  handler: async ({ db }, args) => {
-    if (!args.documentId) {
-      throw new Error("Document ID is undefined")
-    }
-
-    const activeUsers: Id<"users">[] = []
-    const document = await db
-      .query("documents")
-      .filter(q => q.eq(q.field("_id"), args.documentId))
-      .first()
-
-    if (!document) {
-      throw new Error("Document not found")
-    }
-
-    if (document.users) {
-      document.users.forEach(async user => {
-        const UserDocument: any = await db
-          .query("users")
-          .filter(q => q.eq(q.field("_id"), user))
-          .first()
-
-        if (UserDocument?.last_seen < Date.now() - 1000 * 60) {
-          activeUsers.push(user)
-        }
-      })
-    }
-
-    await db.patch(document._id, { users: activeUsers })
   },
 })
 
@@ -136,13 +84,6 @@ export const updateUser = internalMutation({
   },
 })
 
-export const updateGradeSystem = authMutation({
-  args: { gradeSystem: v.id("gradingSystems") },
-  handler: async ({ db, user }, { gradeSystem }) => {
-    await db.patch(user._id, { country: gradeSystem })
-  },
-})
-
 export const updateUsername = authMutation({
   args: { username: v.string() },
   handler: async ({ db, user }, { username }) => {
@@ -160,44 +101,6 @@ export const getMyUserId = authQuery({
   handler: async ctx => ctx?.user?._id,
 })
 
-export const addUserSubjectAction = authAction({
-  args: { name: v.string(), template: v.string() },
-  handler: async (ctx, args) => {
-    if (!ctx.auth) throw new ConvexError("Not Authorized")
-    if (!ctx.user) throw new Error("Not User")
-
-    const userSubjectId = await ctx.runMutation(internal.subjects.addSubject, {
-      name: args.name,
-      addedByUser: true,
-      template: args.template,
-    })
-
-    const assignedSubjectToUser: Id<"studentSubjects"> = await ctx.runMutation(
-      internal.studentSubjects.assignUserAddedSubject,
-      {
-        userId: ctx.user._id,
-        subjectId: userSubjectId,
-      }
-    )
-
-    return assignedSubjectToUser
-  },
-})
-export const editUserSubjectAction = authAction({
-  args: { name: v.string(), subjectId: v.id("subjects") },
-  handler: async (ctx, args) => {
-    if (!ctx.auth) throw new ConvexError("Not Authorized")
-    if (!ctx.user) throw new Error("Not User")
-
-    await ctx.runMutation(internal.subjects.editSubject, {
-      name: args.name,
-      subjectId: args.subjectId,
-    })
-
-    // if(!userSubject) throw new Error('Issue Editing Subject')
-  },
-})
-
 // give back 3 users with the closest result to the search term
 export const searchUsers = authQuery({
   args: { searchTerm: v.string() },
@@ -210,21 +113,5 @@ export const searchUsers = authQuery({
       )
       .take(2)
     return users
-  },
-})
-
-export const updateUserTutorialData = authMutation({
-  args: {
-    country: v.id("gradingSystems"),
-    username: v.string(),
-  },
-  handler: async (ctx, args) => {
-    if (!ctx.auth) throw new ConvexError("Not Authorized")
-    if (!ctx.user) throw new Error("Not User")
-
-    await ctx.db.patch(ctx.user._id, {
-      country: args.country,
-      username: args.username,
-    })
   },
 })

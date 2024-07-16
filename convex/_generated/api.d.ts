@@ -15,21 +15,11 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as clerk from "../clerk.js";
-import type * as countries from "../countries.js";
-import type * as documents from "../documents.js";
-import type * as entityLabels from "../entityLabels.js";
-import type * as events from "../events.js";
-import type * as grades from "../grades.js";
 import type * as http from "../http.js";
-import type * as labels from "../labels.js";
-import type * as learningResources from "../learningResources.js";
-import type * as notes from "../notes.js";
-import type * as notifications from "../notifications.js";
-import type * as projects from "../projects.js";
-import type * as studentSubjects from "../studentSubjects.js";
-import type * as subjects from "../subjects.js";
-import type * as tasks from "../tasks.js";
-import type * as teamProjectWorkItems from "../teamProjectWorkItems.js";
+import type * as task from "../task.js";
+import type * as taskAssignments from "../taskAssignments.js";
+import type * as teamMembers from "../teamMembers.js";
+import type * as teams from "../teams.js";
 import type * as users from "../users.js";
 import type * as util from "../util.js";
 
@@ -43,21 +33,11 @@ import type * as util from "../util.js";
  */
 declare const fullApi: ApiFromModules<{
   clerk: typeof clerk;
-  countries: typeof countries;
-  documents: typeof documents;
-  entityLabels: typeof entityLabels;
-  events: typeof events;
-  grades: typeof grades;
   http: typeof http;
-  labels: typeof labels;
-  learningResources: typeof learningResources;
-  notes: typeof notes;
-  notifications: typeof notifications;
-  projects: typeof projects;
-  studentSubjects: typeof studentSubjects;
-  subjects: typeof subjects;
-  tasks: typeof tasks;
-  teamProjectWorkItems: typeof teamProjectWorkItems;
+  task: typeof task;
+  taskAssignments: typeof taskAssignments;
+  teamMembers: typeof teamMembers;
+  teams: typeof teams;
   users: typeof users;
   util: typeof util;
 }>;

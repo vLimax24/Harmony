@@ -20,9 +20,9 @@ const Navbar = () => {
       setActiveTab("Profile");
     } else if (pathname === "/dashboard") {
       setActiveTab("Home");
-    } else if (pathname === "/Groups") {
+    } else if (pathname === "/groups") {
       setActiveTab("Groups");
-    } else if (pathname === "/Statistics") {
+    } else if (pathname === "/statistics") {
       setActiveTab("Statistics");
     }
   }, [pathname]);
@@ -33,7 +33,11 @@ const Navbar = () => {
         ? "/dashboard/profile"
         : tab === "Home"
         ? "/dashboard"
-        : "/" + tab
+        : tab === "Groups"
+        ? "/groups"
+        : tab === "Statistics"
+        ? "/statistics"
+        : "/dashboard"
     );
   };
 
