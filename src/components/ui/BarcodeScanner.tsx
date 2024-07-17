@@ -1,19 +1,20 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { StyleSheet, Text, View, Animated } from "react-native";
-import { CameraView, Camera } from "expo-camera"; // Ensure you import CameraView correctly
+import { CameraView, Camera } from "expo-camera";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import QRFooterButton from "./QRFooterButton";
 import QRIndicator from "./QRIndicator";
 import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { i18n } from "@/lib/i18n";
 
 export default function BarcodeScanner({ onCancel }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [isLit, setLit] = useState(false);
   const { top, bottom } = useSafeAreaInsets();
-  const slideAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
+  const slideAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     (async () => {
@@ -73,7 +74,7 @@ export default function BarcodeScanner({ onCancel }) {
         enableTorch={isLit ? true : false}
       />
       <View style={[styles.header, { top: top + 40 }]}>
-        <Hint>Scan a QR code</Hint>
+        <Hint>{i18n.t("Dashboard.groups.QRCodeHint")}</Hint>
       </View>
       <QRIndicator />
       <View style={[styles.footer, { bottom: bottom + 30 }]}>

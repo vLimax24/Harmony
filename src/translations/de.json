@@ -18,7 +18,7 @@
       "createButton": "Gruppe erstellen",
       "joinButton": "Gruppe beitreten",
       "joinWithQRCode": "Mit QR-Code beitreten",
-      "joinWithCode": "Mit Code beitreten"
-    }
+      "joinWithCode": "Mit Code beitreten",
+      "QRCodeHint": "Scanne den QR-Code"    }
   }
 }
