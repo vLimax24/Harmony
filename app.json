@@ -19,6 +19,12 @@
         {
           "assets": ["./src/assets/auth/Star.png"]
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
+        }
       ]
     ],
     "name": "Lou-Mobile",

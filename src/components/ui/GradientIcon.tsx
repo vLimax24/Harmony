@@ -2,8 +2,7 @@ import React from "react";
 import { Svg, Defs, LinearGradient, Stop, Rect } from "react-native-svg";
 import MaskedView from "@react-native-masked-view/masked-view";
 
-const GradientIcon = ({ IconComponent, isActive }) => {
-  const iconSize = 24;
+export const GradientIcon = ({ IconComponent, isActive, iconSize }) => {
   const strokeWidth = 1.5; // Adjust the stroke width here
 
   return isActive ? (
@@ -38,5 +37,3 @@ const GradientIcon = ({ IconComponent, isActive }) => {
     />
   );
 };
-
-export default GradientIcon;

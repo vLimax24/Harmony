@@ -14,6 +14,9 @@ module.exports = {
         textWhite: "#E9E8E8",
         textGray: "#7C7C7C"
       },
+      fontSize: {
+        "heading": "24px"
+      }
     },
   },
   future: {

@@ -11,5 +11,14 @@
     "statistics": "Statistiken",
     "profile": "Profil",
     "groups": "Gruppen"
+  },
+  "Dashboard": {
+    "groups": {
+      "title": "Gruppen",
+      "createButton": "Gruppe erstellen",
+      "joinButton": "Gruppe beitreten",
+      "joinWithQRCode": "Mit QR-Code beitreten",
+      "joinWithCode": "Mit Code beitreten"
+    }
   }
 }

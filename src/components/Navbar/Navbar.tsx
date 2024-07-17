@@ -8,7 +8,7 @@ import {
 } from "lucide-react-native";
 import { router, usePathname } from "expo-router";
 import { i18n } from "@/lib/i18n";
-import GradientIcon from "../ui/GradientIcon";
+import { GradientIcon } from "../ui/GradientIcon";
 import { GradientText } from "../ui/GradientText";
 
 const Navbar = () => {
@@ -57,7 +57,11 @@ const Navbar = () => {
         onPress={() => handleTabPress("Home")}
         className="items-center justify-center"
       >
-        <GradientIcon IconComponent={Home} isActive={activeTab === "Home"} />
+        <GradientIcon
+          IconComponent={Home}
+          isActive={activeTab === "Home"}
+          iconSize={24}
+        />
         {renderText(i18n.t("Navbar.home"), activeTab === "Home")}
       </TouchableOpacity>
       <TouchableOpacity
@@ -67,6 +71,7 @@ const Navbar = () => {
         <GradientIcon
           IconComponent={UsersRound}
           isActive={activeTab === "Groups"}
+          iconSize={24}
         />
         {renderText(i18n.t("Navbar.groups"), activeTab === "Groups")}
       </TouchableOpacity>
@@ -77,6 +82,7 @@ const Navbar = () => {
         <GradientIcon
           IconComponent={PieChart}
           isActive={activeTab === "Statistics"}
+          iconSize={24}
         />
         {renderText(i18n.t("Navbar.statistics"), activeTab === "Statistics")}
       </TouchableOpacity>
@@ -87,6 +93,7 @@ const Navbar = () => {
         <GradientIcon
           IconComponent={CircleUserRound}
           isActive={activeTab === "Profile"}
+          iconSize={24}
         />
         {renderText(i18n.t("Navbar.profile"), activeTab === "Profile")}
       </TouchableOpacity>
