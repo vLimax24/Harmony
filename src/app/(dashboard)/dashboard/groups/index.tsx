@@ -26,12 +26,12 @@ export const index = () => {
   };
 
   const handleScannerOpen = async () => {
-    await AsyncStorage.setItem("isScannerOpen", "true");
+    await AsyncStorage.setItem("isNavbarOpen", "true");
     setScannerOpen(true);
   };
 
   const handleScannerClose = async () => {
-    await AsyncStorage.setItem("isScannerOpen", "false");
+    await AsyncStorage.setItem("isNavbarOpen", "false");
     setScannerOpen(false);
   };
 

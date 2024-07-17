@@ -6,12 +6,12 @@ import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function TabLayout() {
-  const [scannerOpen, setScannerOpen] = useState(false);
+  const [navbarOpen, setNavbarOpen] = useState(false);
 
   useEffect(() => {
     const intervalId = setInterval(async () => {
-      const isScannerOpen = await AsyncStorage.getItem("isScannerOpen");
-      isScannerOpen === "true" ? setScannerOpen(true) : setScannerOpen(false);
+      const isNavbarOpen = await AsyncStorage.getItem("isNavbarOpen");
+      isNavbarOpen === "true" ? setNavbarOpen(true) : setNavbarOpen(false);
     }, 100);
 
     return () => clearInterval(intervalId);
@@ -21,7 +21,7 @@ export default function TabLayout() {
       <View className="flex-1 bg-background">
         <Slot />
       </View>
-      {!scannerOpen && <Navbar />}
+      {!navbarOpen && <Navbar />}
       <StatusBar style="auto" />
     </>
   );

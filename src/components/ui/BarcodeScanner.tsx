@@ -29,7 +29,7 @@ export default function BarcodeScanner({ onCancel }) {
   }, []);
 
   const handleBarCodeScanned = async ({ data }) => {
-    await AsyncStorage.setItem("isScannerOpen", "false");
+    await AsyncStorage.setItem("isNavbarOpen", "false");
     if (scanned) return;
     setScanned(true);
     console.log(`Scanned data: ${data}`);
