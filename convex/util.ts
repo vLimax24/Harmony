@@ -37,7 +37,7 @@ export const authAction = customAction(
     const userId = (await ctx.auth.getUserIdentity())?.subject
 
     if (!userId) {
-      throw new ConvexError("must be logged in")
+      throw new ConvexError("User must be logged in!")
     }
 
     const user: any = await ctx.runQuery(internal.users.getUserById, {
@@ -63,7 +63,7 @@ const getUserOrThrow = async (ctx: QueryCtx | MutationCtx) => {
   const userId = (await ctx.auth.getUserIdentity())?.subject
 
   if (!userId) {
-    throw new ConvexError("must be logged in")
+    throw new ConvexError("User must be logged in!")
   }
 
   const user =

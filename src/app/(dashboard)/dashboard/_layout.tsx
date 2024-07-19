@@ -11,7 +11,7 @@ export default function TabLayout() {
   useEffect(() => {
     const intervalId = setInterval(async () => {
       const isNavbarOpen = await AsyncStorage.getItem("isNavbarOpen");
-      isNavbarOpen === "true" ? setNavbarOpen(true) : setNavbarOpen(false);
+      isNavbarOpen === "true" ? setNavbarOpen(false) : setNavbarOpen(true);
     }, 100);
 
     return () => clearInterval(intervalId);

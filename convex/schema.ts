@@ -15,11 +15,13 @@ export default defineSchema({
   .index("by_clerkId", ["clerkId"]),
   teams: defineTable({
     name: v.string(),
-  }),
+    tasks: v.array(v.id("task")),
+    owner: v.id("users")
+  }).index("by_owner", ["owner"]),
   tasks: defineTable({
     name: v.string(),
     frequency: v.number(),
-    weekday: v.string(),
+    weekday: v.number(),
   }),
   teamMembers: defineTable({
     teamId: v.id("teams"),

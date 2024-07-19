@@ -19,6 +19,21 @@
       "joinButton": "Gruppe beitreten",
       "joinWithQRCode": "Mit QR-Code beitreten",
       "joinWithCode": "Mit Code beitreten",
-      "QRCodeHint": "Scanne den QR-Code"    }
+      "QRCodeHint": "Scanne den QR-Code",
+      "createGroup":  {
+        "labelName": "Name",
+        "labelTasks": "Aufgaben",
+        "submitButton": "Erstellen",
+        "weekDays": {
+          "monday": "Montag",
+          "tuesday": "Dienstag",
+          "wednesday": "Mittowch",
+          "thursday": "Donnerstag",
+          "friday": "Freitag",
+          "saturday": "Samstag",
+          "sunday": "Sonntag"
+        }
+      }    
+    }
   }
 }

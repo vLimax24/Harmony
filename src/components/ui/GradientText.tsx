@@ -4,13 +4,20 @@ import MaskedView from "@react-native-masked-view/masked-view";
 import React from "react";
 import { cn } from "@/lib/utils";
 
-export const GradientText = (props: any) => {
+interface Props {
+  text: string;
+  style?: any;
+  className?: string;
+}
+
+export const GradientText = (props: Props) => {
   return (
     <MaskedView
+      className="items-center justify-center flex-row"
       maskElement={
         <Text
           style={[props.style, { backgroundColor: "transparent" }]}
-          className={cn("text-sm", props?.className)}
+          className={cn(props?.className)}
         >
           {props.text}
         </Text>
@@ -21,7 +28,10 @@ export const GradientText = (props: any) => {
         end={{ x: 1, y: 1 }}
         colors={["#4CC3A4", "#8CDF9B"]}
       >
-        <Text style={[props.style, { opacity: 0 }]} className="text-sm">
+        <Text
+          style={[props.style, { opacity: 0 }]}
+          className={cn(props?.className)}
+        >
           {props.text}
         </Text>
       </LinearGradient>
