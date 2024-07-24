@@ -20,6 +20,14 @@ export const updateTeamName = authMutation({
   },
 });
 
+export const getTeamById = authQuery({
+  args: { teamId: v.id("teams") },
+  handler: async ({ db }, args) => {
+    const team = await db.get(args.teamId);
+    return team;
+  },
+});
+
 export const updateTeam = authMutation({
   args: {
     teamId: v.id("teams"),

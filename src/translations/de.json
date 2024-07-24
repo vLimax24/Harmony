@@ -20,6 +20,9 @@
       "joinWithQRCode": "Mit QR-Code beitreten",
       "joinWithCode": "Mit Code beitreten",
       "QRCodeHint": "Scanne den QR-Code",
+      "joinTeamConfirmation": "Möchtest du der Gruppe {{name}} beitreten?",
+      "joinTeam": "Beitreten",
+      "cancel": "Abbrechen",
       "createGroup": {
         "labelName": "Name",
         "labelTasks": "Aufgaben",

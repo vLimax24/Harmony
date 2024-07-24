@@ -8,6 +8,7 @@ import QRIndicator from "./QRIndicator";
 import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { i18n } from "@/lib/i18n";
+import { router } from "expo-router";
 
 export default function BarcodeScanner({ onCancel }) {
   const [hasPermission, setHasPermission] = useState(null);
@@ -29,10 +30,10 @@ export default function BarcodeScanner({ onCancel }) {
   }, []);
 
   const handleBarCodeScanned = async ({ data }) => {
-    await AsyncStorage.setItem("isNavbarOpen", "false");
+    await AsyncStorage.setItem("isNavbarOpen", "true");
     if (scanned) return;
     setScanned(true);
-    console.log(`Scanned data: ${data}`);
+    router.push("/dashboard/groups/share/confirm/" + data);
     Animated.timing(slideAnim, {
       toValue: 0,
       duration: 200,

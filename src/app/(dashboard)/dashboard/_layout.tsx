@@ -22,7 +22,7 @@ export default function TabLayout() {
       <View className="flex-1 bg-background">
         <Slot />
       </View>
-      {!navbarOpen || (navbarOpen !== null && <Navbar />)}
+      {navbarOpen || (navbarOpen !== null && <Navbar />)}
       <StatusBar style="auto" />
     </>
   );

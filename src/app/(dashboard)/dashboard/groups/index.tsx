@@ -41,12 +41,12 @@ export const index = () => {
   };
 
   const handleScannerOpen = async () => {
-    await AsyncStorage.setItem("isNavbarOpen", "true");
+    await AsyncStorage.setItem("isNavbarOpen", "false");
     setScannerOpen(true);
   };
 
   const handleScannerClose = async () => {
-    await AsyncStorage.setItem("isNavbarOpen", "false");
+    await AsyncStorage.setItem("isNavbarOpen", "true");
     setScannerOpen(false);
   };
 

@@ -1,16 +1,17 @@
-import { httpRouter } from "convex/server"
+import { httpRouter } from "convex/server";
 
-import { internal } from "./_generated/api"
-import { httpAction } from "./_generated/server"
+import { internal } from "./_generated/api";
+import { httpAction } from "./_generated/server";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const http = httpRouter()
+const http = httpRouter();
 
 http.route({
   path: "/clerk",
   method: "POST",
   handler: httpAction(async (ctx, request) => {
-    const payloadString = await request.text()
-    const headerPayload = request.headers
+    const payloadString = await request.text();
+    const headerPayload = request.headers;
 
     try {
       const result = await ctx.runAction(internal.clerk.fulfill, {
@@ -20,7 +21,7 @@ http.route({
           "svix-timestamp": headerPayload.get("svix-timestamp")!,
           "svix-signature": headerPayload.get("svix-signature")!,
         },
-      })
+      });
 
       switch (result.type) {
         case "user.created":
@@ -29,34 +30,35 @@ http.route({
             clerkId: result.data.id,
             name: `${result.data.first_name}`,
             profileImage: result.data.image_url,
-          })
-          break
+          });
+          AsyncStorage.setItem("isNavbarOpen", "true");
+          break;
         case "user.updated":
           await ctx.runMutation(internal.users.updateUser, {
             clerkId: result.data.id,
             profileImage: result.data.image_url,
             name: `${result.data.first_name} ${result.data.last_name}`,
-          })
-          break
+          });
+          break;
         case "user.deleted":
           if (result.data.id) {
             await ctx.runMutation(internal.users.deleteUser, {
               clerkId: result.data.id,
-            })
+            });
           }
-          break
+          break;
       }
 
       return new Response(null, {
         status: 200,
-      })
+      });
     } catch (err) {
-      console.error(err)
+      console.error(err);
       return new Response("Webhook Error", {
         status: 400,
-      })
+      });
     }
   }),
-})
+});
 
-export default http
+export default http;
