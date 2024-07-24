@@ -1,7 +1,13 @@
 // index.js
 import React, { useRef, useState, useCallback } from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
-import { Plus, UsersRound, Scan, TextCursorInput } from "lucide-react-native";
+import {
+  Plus,
+  UsersRound,
+  Scan,
+  TextCursorInput,
+  Share,
+} from "lucide-react-native";
 import { i18n } from "@/lib/i18n";
 import { GradientText } from "@/components/ui/GradientText";
 import { GradientIcon } from "@/components/ui/GradientIcon";
@@ -10,11 +16,20 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { cn } from "@/lib/utils";
 import BarcodeScanner from "@/components/ui/BarcodeScanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
+import { Id } from "convex/_generated/dataModel";
 
 export const index = () => {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [isScannerOpen, setScannerOpen] = useState(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const getTeamsForUser = useQuery(api.teams.getTeamsForUser);
+
+  const handleShareTeam = (teamId: Id<"teams">) => {
+    router.push(`/dashboard/groups/share/${teamId}`);
+  };
 
   const handleOpenPress = () => {
     setSheetOpen(true);
@@ -44,6 +59,24 @@ export const index = () => {
           <Text className="text-textWhite font-bold text-heading">
             {i18n.t("Dashboard.groups.title")}
           </Text>
+          <View>
+            {getTeamsForUser &&
+              getTeamsForUser.map((team) => (
+                <View
+                  key={team._id}
+                  className="flex-row items-center justify-between bg-backgroundShade px-4 py-2 rounded-[12px] mt-2"
+                >
+                  <Text className="text-textWhite">{team.name}</Text>
+                  <TouchableOpacity onPress={() => handleShareTeam(team._id)}>
+                    <GradientIcon
+                      IconComponent={Share}
+                      isActive={true}
+                      iconSize={20}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))}
+          </View>
           <View className="w-full flex-row gap-2">
             <TouchableOpacity
               activeOpacity={0.8}

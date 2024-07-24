@@ -9,13 +9,14 @@ import {
   Keyboard,
 } from "react-native";
 import { useConvexAuth } from "convex/react";
-import { ArrowLeft, Trash, Pencil } from "lucide-react-native";
+import { ArrowLeft, Trash, Pencil, TriangleAlert } from "lucide-react-native";
 import { i18n } from "@/lib/i18n";
 import { useRouter } from "expo-router";
 import { GradientText } from "@/components/ui/GradientText";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useMutation } from "convex/react";
 import { api } from "convex/_generated/api";
+import { Id } from "convex/_generated/dataModel";
 
 const weekdays = [
   "Monday",
@@ -35,12 +36,15 @@ const Index = () => {
   const [frequency, setFrequency] = useState("1");
   const [tasks, setTasks] = useState({});
   const [editingTaskId, setEditingTaskId] = useState(null);
+  const [teamName, setTeamName] = useState("");
   const bottomSheetRef = useRef(null);
   const snapPoints = ["25%", "50%"];
 
   const { isAuthenticated } = useConvexAuth();
 
   const createMultipleTasks = useMutation(api.task.createMultipleTasks);
+  const createTeam = useMutation(api.teams.createTeam);
+  const addOwnUserToTeam = useMutation(api.teamMembers.addOwnUserToTeam);
 
   const handleAddTask = (day) => {
     setSelectedDay(day);
@@ -51,13 +55,20 @@ const Index = () => {
     bottomSheetRef.current?.expand();
   };
 
+  const handleCreateTeam = async (taskIds) => {
+    const createdTeamId = await createTeam({ name: teamName, tasks: taskIds });
+    router.push("/dashboard/groups");
+
+    return createdTeamId;
+  };
+
   const handleSaveTask = async () => {
     Keyboard.dismiss();
 
     const taskData = {
       name: taskName,
       frequency: parseInt(frequency, 10),
-      weekday: weekdays.indexOf(selectedDay) + 1, // Convert day to number (1-7)
+      weekday: weekdays.indexOf(selectedDay) + 1,
     };
 
     if (editingTaskId !== null) {
@@ -75,12 +86,17 @@ const Index = () => {
       setTasks(updatedTasks);
     }
 
-    // Reset state
     setTaskName("");
     setFrequency("1");
     setEditingTaskId(null);
     setSheetOpen(false);
     bottomSheetRef.current?.close();
+  };
+
+  const handleSubmitForm = async () => {
+    const taskIds: Id<"tasks">[] = await handleSubmitTasks();
+    const teamId = await handleCreateTeam(taskIds);
+    await addOwnUserToTeam({ teamId: teamId });
   };
 
   const handleEditTask = (day, index) => {
@@ -102,7 +118,6 @@ const Index = () => {
   };
 
   const handleSubmitTasks = async () => {
-    // Collect all tasks into a single array
     const allTasks = [];
     for (const day in tasks) {
       allTasks.push(
@@ -113,10 +128,9 @@ const Index = () => {
         }))
       );
     }
-    // Submit all tasks to the database at once
-    await createMultipleTasks({ tasks: allTasks });
-    // Reset tasks after submission
-    setTasks({});
+    const taskIds = await createMultipleTasks({ tasks: allTasks });
+
+    return taskIds;
   };
 
   return (
@@ -146,13 +160,21 @@ const Index = () => {
               cursorColor={"#E9E8E8"}
               className="bg-backgroundShade px-4 py-3 rounded-[12px] text-textWhite"
               editable={!sheetOpen}
+              value={teamName}
+              onChangeText={(e) => setTeamName(e)}
             />
           </View>
 
-          <View>
+          <View className="gap-4">
             <Text className="text-textWhite font-bold text-[15px]">
               {i18n.t("Dashboard.groups.createGroup.labelTasks")}
             </Text>
+            <View className="flex-row items-center justify-center gap-4 p-4 rounded-xl bg-backgroundShade">
+              <TriangleAlert color={"#FF6D6D"} size={24} />
+              <Text className="text-textWhite text-[12px] font-bold text-wrap">
+                {i18n.t("Dashboard.groups.createGroup.attentionMessage")}
+              </Text>
+            </View>
           </View>
           {weekdays.map((day) => (
             <View key={day} className="mb-4">
@@ -195,7 +217,7 @@ const Index = () => {
           <View>
             <TouchableOpacity
               className="bg-backgroundShade px-4 py-5 rounded-[12px] items-center justify-center"
-              onPress={handleSubmitTasks}
+              onPress={handleSubmitForm}
               disabled={sheetOpen}
             >
               <GradientText

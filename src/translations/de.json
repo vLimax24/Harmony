@@ -20,7 +20,7 @@
       "joinWithQRCode": "Mit QR-Code beitreten",
       "joinWithCode": "Mit Code beitreten",
       "QRCodeHint": "Scanne den QR-Code",
-      "createGroup":  {
+      "createGroup": {
         "labelName": "Name",
         "labelTasks": "Aufgaben",
         "submitButton": "Erstellen",
@@ -32,8 +32,9 @@
           "friday": "Freitag",
           "saturday": "Samstag",
           "sunday": "Sonntag"
-        }
-      }    
+        },
+        "attentionMessage": "Du kannst die Aufgaben nach der Erstellungen an Mitglieder zuweisen"
+      }
     }
   }
 }
