@@ -16,12 +16,13 @@ export default function TabLayout() {
 
     return () => clearInterval(intervalId);
   }, []);
+
   return (
     <>
       <View className="flex-1 bg-background">
         <Slot />
       </View>
-      {!navbarOpen && <Navbar />}
+      {!navbarOpen || (navbarOpen !== null && <Navbar />)}
       <StatusBar style="auto" />
     </>
   );
