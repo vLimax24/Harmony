@@ -19,6 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
+import { Image } from "expo-image";
 
 export const index = () => {
   const [sheetOpen, setSheetOpen] = useState(false);

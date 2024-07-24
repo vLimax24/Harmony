@@ -96,3 +96,25 @@ export const getTeamsForUser = authQuery({
     return teams;
   },
 });
+
+export const getProfileImagesFromTeamMembers = authQuery({
+  args: { teamId: v.id("teams") },
+  handler: async (ctx, args) => {
+    const teamMembers = await ctx.db
+      .query("teamMembers")
+      .withIndex("by_teamId", (q) => q.eq("teamId", args.teamId))
+      .collect();
+
+    const userIds = teamMembers.map((teamMember) => teamMember.userId);
+
+    const users = await Promise.all(
+      userIds.map(async (userId) => {
+        const user = await ctx.db.get(userId);
+
+        return user?.profileImage;
+      })
+    );
+
+    return users;
+  },
+});

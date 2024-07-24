@@ -60,7 +60,7 @@ export default function SignUpScreen() {
   };
 
   return (
-    <View className="p-8">
+    <View className="px-8 pt-14">
       {!pendingVerification && (
         <>
           <TextInput

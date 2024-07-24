@@ -8,7 +8,7 @@ const QRCODE = ({ value }: { value: string }) => {
       size={175}
       color="black"
       backgroundColor="white"
-      ecl="H"
+      ecl="L"
     />
   );
 };

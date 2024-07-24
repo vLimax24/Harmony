@@ -17,6 +17,7 @@ const ConfirmGroup = () => {
 
   const handleJoinTeam = async () => {
     await addMember({ teamId: id as Id<"teams"> });
+    router.push("/dashboard/groups");
   };
 
   return (
