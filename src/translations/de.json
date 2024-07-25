@@ -38,6 +38,10 @@
         },
         "attentionMessage": "Du kannst die Aufgaben nach der Erstellungen an Mitglieder zuweisen"
       }
+    },
+    "home": {
+      "noTasksAssigned": "Noch keine Aufgaben zugewiesen",
+      "markAsCompleteButton": "Fertig"
     }
   }
 }

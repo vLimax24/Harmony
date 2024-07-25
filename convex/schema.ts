@@ -35,4 +35,10 @@ export default defineSchema({
   })
     .index("by_taskId", ["taskId"])
     .index("by_userId", ["userId"]),
+  completedTasks: defineTable({
+    taskId: v.id("tasks"),
+    userId: v.id("users"),
+  })
+    .index("by_taskId", ["taskId"])
+    .index("by_userId", ["userId"]),
 });

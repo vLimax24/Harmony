@@ -15,6 +15,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as clerk from "../clerk.js";
+import type * as completedTasks from "../completedTasks.js";
 import type * as http from "../http.js";
 import type * as task from "../task.js";
 import type * as taskAssignments from "../taskAssignments.js";
@@ -33,6 +34,7 @@ import type * as util from "../util.js";
  */
 declare const fullApi: ApiFromModules<{
   clerk: typeof clerk;
+  completedTasks: typeof completedTasks;
   http: typeof http;
   task: typeof task;
   taskAssignments: typeof taskAssignments;
