@@ -41,7 +41,13 @@
     },
     "home": {
       "noTasksAssigned": "Noch keine Aufgaben zugewiesen",
-      "markAsCompleteButton": "Fertig"
+      "markAsCompleteButton": "Fertig",
+      "selectTeam": "Wähle eine Gruppe aus",
+      "backButton": "Zurück",
+      "nextButton": "Weiter",
+      "previousButton": "Zurück",
+      "noTeamsAvailable": "Keine Gruppen verfügbar",
+      "signOutButton": "Abmelden"
     }
   }
 }

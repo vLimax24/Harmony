@@ -32,12 +32,15 @@ export default defineSchema({
   taskAssignments: defineTable({
     taskId: v.id("tasks"),
     userId: v.id("users"),
+    teamId: v.id("teams"),
   })
     .index("by_taskId", ["taskId"])
     .index("by_userId", ["userId"]),
   completedTasks: defineTable({
     taskId: v.id("tasks"),
     userId: v.id("users"),
+    teamId: v.id("teams"),
+    createdDate: v.string(),
   })
     .index("by_taskId", ["taskId"])
     .index("by_userId", ["userId"]),
