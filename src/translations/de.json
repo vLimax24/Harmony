@@ -17,6 +17,8 @@
       "title": "Gruppen",
       "createButton": "Gruppe erstellen",
       "joinButton": "Gruppe beitreten",
+      "oneGroupMember": "Person",
+      "mutipleGroupMembers": "Personen",
       "joinWithQRCode": "Mit QR-Code beitreten",
       "joinWithCode": "Mit Code beitreten",
       "QRCodeHint": "Scanne den QR-Code",
@@ -25,8 +27,15 @@
       "cancel": "Abbrechen",
       "createGroup": {
         "labelName": "Name",
+        "placeholderName": "Familie",
+        "labelFrequency": "Häufigkeit (Wochen)",
+        "labelIcon": "Symbol",
+        "errorIcon": "Bitte wähle ein Symbol aus",
+        "taskPlaceholder": "Geschirrspüler",
         "labelTasks": "Aufgaben",
         "submitButton": "Erstellen",
+        "saveTaskButton": "Speichern",
+        "addTask": "Aufgabe hinzufügen",
         "weekDays": {
           "monday": "Montag",
           "tuesday": "Dienstag",
@@ -36,7 +45,18 @@
           "saturday": "Samstag",
           "sunday": "Sonntag"
         },
-        "attentionMessage": "Du kannst die Aufgaben nach der Erstellungen an Mitglieder zuweisen"
+        "alertMessage": "Du kannst die Aufgaben nach der Erstellungen an Teammitglieder zuweisen",
+        "errors": {
+          "teamName": "Bitte gib einen Teamnamen ein",
+          "teamMinLength": "Der Teamname muss mindestens 3 Zeichen lang sein",
+          "teamMaxLength": "Der Teamname darf maximal 20 Zeichen lang sein",
+          "icon": "Bitte wähle ein Symbol aus",
+          "taskRequired": "Bitte gib einen Aufgabennamen ein",
+          "frequencyRequired": "Bitte gib eine Häufigkeit ein",
+          "frequencyPattern": "Bitte gebe eine Zahl zwischen 1 und 10 ein",
+          "frequencyMin": "Die Häufigkeit muss größer oder gleich als 1 sein",
+          "frequencyMax": "Die Häufigkeit darf nicht größer als 10 sein"
+        }
       }
     },
     "home": {

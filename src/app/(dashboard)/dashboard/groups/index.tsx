@@ -1,12 +1,13 @@
 // index.js
-import React, { useRef, useState, useCallback } from "react";
+import React, { useRef, useState } from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import {
   Plus,
   UsersRound,
   Scan,
   TextCursorInput,
-  Share,
+  Share2,
+  UserRound,
 } from "lucide-react-native";
 import { i18n } from "@/lib/i18n";
 import { GradientText } from "@/components/ui/GradientText";
@@ -27,6 +28,10 @@ export const index = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const getTeamsForUser = useQuery(api.teams.getTeamsForUser);
+  const numberOfMembersForTeams = useQuery(
+    api.teamMembers.getNumberOfMembersForMultipleTeams,
+    { teamIds: getTeamsForUser?.map((team) => team._id) }
+  );
 
   const handleShareTeam = (teamId: Id<"teams">) => {
     router.push(`/dashboard/groups/share/${teamId}`);
@@ -53,6 +58,15 @@ export const index = () => {
 
   const snapPoints = ["30%"];
 
+  // Create a mapping of teamId to member count
+  const memberCountMap = React.useMemo(() => {
+    const map = new Map();
+    numberOfMembersForTeams?.forEach(({ teamId, members }) => {
+      map.set(teamId, members);
+    });
+    return map;
+  }, [numberOfMembersForTeams]);
+
   return (
     <View className="flex-1">
       <View className="flex-1">
@@ -60,23 +74,39 @@ export const index = () => {
           <Text className="text-textWhite font-bold text-heading">
             {i18n.t("Dashboard.groups.title")}
           </Text>
-          <View>
+          <View className="mb-4">
             {getTeamsForUser &&
-              getTeamsForUser.map((team) => (
-                <View
-                  key={team._id}
-                  className="flex-row items-center justify-between bg-backgroundShade px-4 py-2 rounded-[12px] mt-2"
-                >
-                  <Text className="text-textWhite">{team.name}</Text>
-                  <TouchableOpacity onPress={() => handleShareTeam(team._id)}>
-                    <GradientIcon
-                      IconComponent={Share}
-                      isActive={true}
-                      iconSize={20}
-                    />
-                  </TouchableOpacity>
-                </View>
-              ))}
+              getTeamsForUser.map((team) => {
+                const memberCount = memberCountMap.get(team._id) || 0;
+                return (
+                  <View
+                    key={team._id}
+                    className="flex-row items-center justify-between bg-backgroundShade px-4 py-5 rounded-[12px] mt-2"
+                  >
+                    <View>
+                      <Text className="text-textWhite font-bold text-[18px]">
+                        {team.name}
+                      </Text>
+                      <View className="flex-row gap-2 items-center justify-center mt-0.5">
+                        <UserRound color={"#7C7C7C"} size={15} />
+                        <Text className="text-[#7C7C7C] text-[12px]">
+                          {memberCount}{" "}
+                          {memberCount === 1
+                            ? i18n.t("Dashboard.groups.oneGroupMember")
+                            : i18n.t("Dashboard.groups.mutipleGroupMembers")}
+                        </Text>
+                      </View>
+                    </View>
+                    <TouchableOpacity onPress={() => handleShareTeam(team._id)}>
+                      <GradientIcon
+                        IconComponent={Share2}
+                        isActive={true}
+                        iconSize={20}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                );
+              })}
           </View>
           <View className="w-full flex-row gap-2">
             <TouchableOpacity

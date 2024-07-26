@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { authMutation } from "./util";
+import { authMutation, authQuery } from "./util";
 
 export const addTeamMember = authMutation({
   args: { teamId: v.id("teams") },
@@ -35,5 +35,35 @@ export const removeTeamMember = authMutation({
     if (teamMember) {
       await db.delete(teamMember._id);
     }
+  },
+});
+
+export const getNumberOfMembersForTeam = authQuery({
+  args: { teamId: v.id("teams") },
+  handler: async (ctx, args) => {
+    const teamMembers = await ctx.db
+      .query("teamMembers")
+      .withIndex("by_teamId", (q) => q.eq("teamId", args.teamId))
+      .collect();
+
+    return teamMembers.length;
+  },
+});
+
+export const getNumberOfMembersForMultipleTeams = authQuery({
+  args: { teamIds: v.array(v.id("teams")) },
+  handler: async (ctx, args) => {
+    const teams = await Promise.all(
+      args.teamIds.map(async (teamId) => {
+        const teamMembers = await ctx.db
+          .query("teamMembers")
+          .withIndex("by_teamId", (q) => q.eq("teamId", teamId))
+          .collect();
+
+        return { teamId, members: teamMembers.length };
+      })
+    );
+
+    return teams;
   },
 });

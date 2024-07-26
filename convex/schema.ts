@@ -22,6 +22,7 @@ export default defineSchema({
     name: v.string(),
     frequency: v.number(),
     weekday: v.number(),
+    icon: v.string(),
   }).index("by_weekday", ["weekday"]),
   teamMembers: defineTable({
     teamId: v.id("teams"),

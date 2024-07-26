@@ -3,12 +3,18 @@ import { authMutation, authQuery } from "./util";
 import { Doc } from "./_generated/dataModel";
 
 export const createTask = authMutation({
-  args: { name: v.string(), frequency: v.number(), weekday: v.number() },
+  args: {
+    name: v.string(),
+    frequency: v.number(),
+    weekday: v.number(),
+    icon: v.string(),
+  },
   handler: async ({ db }, args) => {
     const newTask = await db.insert("tasks", {
       name: args.name,
       frequency: args.frequency,
       weekday: args.weekday,
+      icon: args.icon,
     });
     return newTask;
   },
@@ -21,6 +27,7 @@ export const createMultipleTasks = authMutation({
         name: v.string(),
         frequency: v.number(),
         weekday: v.number(),
+        icon: v.string(),
       })
     ),
   },
@@ -31,6 +38,7 @@ export const createMultipleTasks = authMutation({
           name: task.name,
           frequency: task.frequency,
           weekday: task.weekday,
+          icon: task.icon,
         });
         return newTaskId;
       })

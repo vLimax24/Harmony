@@ -43,7 +43,7 @@ const LoadingAnimation = () => {
             duration: 500,
             useNativeDriver: true,
           }),
-          Animated.delay(300), // Longer delay after the animation completes
+          Animated.delay(500), // Longer delay after the animation completes
         ])
       );
     };
