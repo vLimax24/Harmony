@@ -16,6 +16,7 @@
     "groups": {
       "title": "Gruppen",
       "createButton": "Gruppe erstellen",
+      "editButton": "Gruppe bearbeiten",
       "joinButton": "Gruppe beitreten",
       "oneGroupMember": "Person",
       "mutipleGroupMembers": "Personen",
@@ -27,6 +28,7 @@
       "cancel": "Abbrechen",
       "createGroup": {
         "labelName": "Name",
+        "selectAssignee": "Zuweisen",
         "placeholderName": "Familie",
         "labelFrequency": "Häufigkeit (Wochen)",
         "labelIcon": "Symbol",
@@ -36,7 +38,7 @@
         "submitButton": "Erstellen",
         "saveTaskButton": "Speichern",
         "addTask": "Aufgabe hinzufügen",
-        "weekDays": {
+        "weekdays": {
           "monday": "Montag",
           "tuesday": "Dienstag",
           "wednesday": "Mittowch",
@@ -57,7 +59,8 @@
           "frequencyMin": "Die Häufigkeit muss größer oder gleich als 1 sein",
           "frequencyMax": "Die Häufigkeit darf nicht größer als 10 sein"
         }
-      }
+      },
+      "editGroup": {}
     },
     "home": {
       "noTasksAssigned": "Noch keine Aufgaben zugewiesen",

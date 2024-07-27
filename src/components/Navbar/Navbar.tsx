@@ -75,7 +75,7 @@ const Navbar = () => {
         />
         {renderText(i18n.t("Navbar.groups"), activeTab === "Groups")}
       </TouchableOpacity>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => handleTabPress("Statistics")}
         className="items-center justify-center"
       >
@@ -85,7 +85,7 @@ const Navbar = () => {
           iconSize={24}
         />
         {renderText(i18n.t("Navbar.statistics"), activeTab === "Statistics")}
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity
         onPress={() => handleTabPress("Profile")}
         className="items-center justify-center"

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Text,
   View,
@@ -12,9 +12,10 @@ import {
 import { useRouter } from "expo-router";
 import { GradientText } from "@/components/ui/GradientText";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, set } from "react-hook-form";
 import { LinearGradient } from "expo-linear-gradient";
 import { ArrowLeft, Trash2, Pencil, TriangleAlert } from "lucide-react-native";
+import { Picker } from "@react-native-picker/picker";
 import {
   WashingMachine,
   Dog,
@@ -31,8 +32,12 @@ import {
   Plus,
 } from "lucide-react-native";
 import { i18n } from "@/lib/i18n";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
+import { Id, Doc } from "convex/_generated/dataModel";
 import { api } from "convex/_generated/api";
+import { useLocalSearchParams } from "expo-router";
+import DropDownPicker from "react-native-dropdown-picker";
+import { Image } from "expo-image";
 
 const weekdays = [
   i18n.t("Dashboard.groups.createGroup.weekdays.monday"),
@@ -92,19 +97,110 @@ const getIconComponent = (iconName, size) => {
 };
 
 const Index = () => {
+  const { id } = useLocalSearchParams();
+
+  const getMembersForTeam = useQuery(api.teams.getMembersForTeam, {
+    teamId: id as Id<"teams">,
+  });
+
+  const assignTaskToMember = useMutation(
+    api.taskAssignments.assignTaskToMember
+  );
+
   const router = useRouter();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState(null);
   const [tasks, setTasks] = useState({});
   const [teamName, setTeamName] = useState("");
+  const [dropdownItems, setDropdownItems] = useState([]);
   const [teamNameError, setTeamNameError] = useState("");
   const [editingTaskId, setEditingTaskId] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState({});
+  const [selectedAssignees, setSelectedAssignees] = useState({});
   const bottomSheetRef = useRef(null);
   const snapPoints = ["65%"];
 
-  const createMultipleTasks = useMutation(api.task.createMultipleTasks);
+  const updateOrCreateMultipleTasks = useMutation(
+    api.task.updateOrCreateMultipleTasks
+  );
   const createTeam = useMutation(api.teams.createTeam);
   const addOwnUserToTeam = useMutation(api.teamMembers.addOwnUserToTeam);
+  const team = useQuery(api.teams.getTeamById, { teamId: id as Id<"teams"> });
+  const tasksQuery =
+    useQuery(api.task.getTasksForTeam, {
+      teamId: id as Id<"teams">,
+      taskIds: team?.tasks,
+    }) || [];
+
+  const checkIfMutipleTasksAreAssigned = useQuery(
+    api.task.checkIfMultipleTasksAreAssigned,
+    { taskIds: team?.tasks }
+  );
+
+  useEffect(() => {
+    if (getMembersForTeam) {
+      const items = getMembersForTeam.map((member) => ({
+        label: member.name,
+        value: member._id,
+        icon: () => (
+          <Image
+            source={{ uri: member.profileImage }}
+            style={styles.memberImage}
+          />
+        ),
+      }));
+      setDropdownItems(items);
+    }
+  }, [getMembersForTeam]);
+
+  useEffect(() => {
+    if (team) {
+      setTeamName(team.name);
+    }
+  }, [team]);
+
+  useEffect(() => {
+    if (
+      checkIfMutipleTasksAreAssigned &&
+      checkIfMutipleTasksAreAssigned.length > 0
+    ) {
+      const assignedUsers = {};
+      checkIfMutipleTasksAreAssigned.forEach((taskAssignment) => {
+        if (taskAssignment.assigned) {
+          assignedUsers[taskAssignment.taskId] = taskAssignment.userId;
+        }
+      });
+      setSelectedAssignees(assignedUsers);
+    }
+  }, [checkIfMutipleTasksAreAssigned]);
+
+  useEffect(() => {
+    if (tasksQuery && tasksQuery.length > 0) {
+      tasksQuery.forEach((task) => {
+        const selectedDay = weekdays[task.weekday - 1];
+        const taskData = {
+          _id: task._id,
+          name: task.name,
+          frequency: task.frequency,
+          weekday: weekdays.indexOf(selectedDay) + 1,
+          icon: task.icon,
+        };
+
+        setTasks((prevTasks) => {
+          const updatedTasks = { ...prevTasks };
+          if (editingTaskId !== null) {
+            updatedTasks[selectedDay][editingTaskId] = taskData;
+          } else {
+            if (!updatedTasks[selectedDay]) {
+              updatedTasks[selectedDay] = [];
+            }
+            updatedTasks[selectedDay].push(taskData);
+          }
+          return updatedTasks;
+        });
+      });
+    }
+  }, [tasksQuery]);
 
   const {
     control,
@@ -154,7 +250,9 @@ const Index = () => {
       return;
     }
 
+    const task = tasks[selectedDay][editingTaskId];
     const taskData = {
+      ...(task?._id ? { _id: task._id } : { teamId: id as Id<"teams"> }),
       name: data.taskName,
       frequency: parseInt(data.frequency, 10),
       weekday: weekdays.indexOf(selectedDay) + 1,
@@ -222,6 +320,22 @@ const Index = () => {
     }
   };
 
+  const handleValueChange = async (taskId, itemValue) => {
+    setSelectedAssignees((prev) => ({
+      ...prev,
+      [taskId]: itemValue,
+    }));
+    try {
+      await assignTaskToMember({
+        teamId: id as Id<"teams">,
+        userId: itemValue,
+        taskId: taskId,
+      });
+    } catch (error) {
+      console.error("Error assigning task:", error);
+    }
+  };
+
   const handleDeleteTask = (day, index) => {
     const updatedTasks = { ...tasks };
     updatedTasks[day].splice(index, 1);
@@ -236,6 +350,7 @@ const Index = () => {
     for (const day in tasks) {
       allTasks.push(
         ...tasks[day].map((task) => ({
+          ...(task?._id ? { taskId: task._id } : { teamId: id as Id<"teams"> }),
           name: task.name,
           frequency: task.frequency,
           weekday: weekdays.indexOf(day) + 1,
@@ -243,7 +358,7 @@ const Index = () => {
         }))
       );
     }
-    const taskIds = await createMultipleTasks({ tasks: allTasks });
+    const taskIds = await updateOrCreateMultipleTasks({ tasks: allTasks });
     return taskIds;
   };
 
@@ -308,7 +423,7 @@ const Index = () => {
                 fontWeight: "bold",
               }}
             >
-              {i18n.t("Dashboard.groups.createButton")}
+              {i18n.t("Dashboard.groups.editButton")}
             </Text>
           </View>
           <View style={{ gap: 8 }}>
@@ -346,24 +461,6 @@ const Index = () => {
             >
               {i18n.t("Dashboard.groups.createGroup.labelTasks")}
             </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 16,
-                padding: 16,
-                backgroundColor: "#1D1F24",
-                borderRadius: 12,
-              }}
-            >
-              <TriangleAlert color={"#FF6D6D"} size={24} />
-              <Text
-                style={{ color: "#E9E8E8", fontSize: 12, fontWeight: "bold" }}
-              >
-                {i18n.t("Dashboard.groups.createGroup.alertMessage")}
-              </Text>
-            </View>
           </View>
 
           {weekdays.map((day) => (
@@ -387,9 +484,6 @@ const Index = () => {
                   <View
                     key={index}
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
                       backgroundColor: "#1D1F24",
                       padding: 16,
                       borderBottomWidth:
@@ -398,25 +492,64 @@ const Index = () => {
                     }}
                   >
                     <View
-                      style={{ flexDirection: "row", alignItems: "center" }}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
                     >
-                      {getIconComponent(task.icon, 24)}
-                      <Text style={{ color: "#E9E8E8", marginLeft: 8 }}>
-                        {task.name} (Every {task.frequency} week(s))
-                      </Text>
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        {getIconComponent(task.icon, 24)}
+                        <Text style={{ color: "#E9E8E8", marginLeft: 8 }}>
+                          {task.name} (Every {task.frequency} week(s))
+                        </Text>
+                      </View>
+                      <View style={{ flexDirection: "row" }}>
+                        <TouchableOpacity
+                          onPress={() => handleEditTask(day, index)}
+                          style={{ marginRight: 8 }}
+                        >
+                          <Pencil size={20} color="#E9E8E8" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => handleDeleteTask(day, index)}
+                        >
+                          <Trash2 size={20} color="#E9E8E8" />
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                    <View style={{ flexDirection: "row" }}>
-                      <TouchableOpacity
-                        onPress={() => handleEditTask(day, index)}
-                        style={{ marginRight: 8 }}
+                    <View className="relative">
+                      <Picker
+                        selectedValue={selectedAssignees[task._id] || ""}
+                        onValueChange={(itemValue) =>
+                          handleValueChange(task._id, itemValue)
+                        }
+                        style={styles.picker}
+                        mode="dropdown"
                       >
-                        <Pencil size={20} color="#E9E8E8" />
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => handleDeleteTask(day, index)}
-                      >
-                        <Trash2 size={20} color="#E9E8E8" />
-                      </TouchableOpacity>
+                        <Picker.Item
+                          label={
+                            selectedAssignees[task._id]
+                              ? dropdownItems.find(
+                                  (item) =>
+                                    item.value === selectedAssignees[task._id]
+                                )?.label
+                              : "Select Assignee"
+                          }
+                          value=""
+                          style={styles.placeholderItem}
+                        />
+                        {dropdownItems.map((item) => (
+                          <Picker.Item
+                            key={item.value}
+                            label={item.label}
+                            value={item.value}
+                            style={styles.item}
+                          />
+                        ))}
+                      </Picker>
                     </View>
                   </View>
                 ))}
@@ -454,7 +587,7 @@ const Index = () => {
               onPress={handleSubmitForm}
             >
               <GradientText
-                text={i18n.t("Dashboard.groups.createGroup.submitButton")}
+                text={i18n.t("Dashboard.groups.createGroup.saveTaskButton")}
                 style={{ fontSize: 20, fontWeight: "bold", color: "#E9E8E8" }}
               />
             </TouchableOpacity>
@@ -645,6 +778,11 @@ const styles = StyleSheet.create({
     zIndex: 0,
     pointerEvents: "auto",
   },
+  memberImage: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+  },
   iconContainer: {
     flex: 1,
     alignItems: "center",
@@ -657,6 +795,29 @@ const styles = StyleSheet.create({
   },
   selectedIconContainer: {
     borderColor: "transparent",
+  },
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  pickerContainer: {
+    marginBottom: 16,
+  },
+  picker: {
+    backgroundColor: "#1E1E1E", // Dark background color
+    color: "#E9E8E8", // Text color
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#333", // Border color
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  placeholderItem: {
+    color: "#8C8C8C", // Placeholder text color
+    fontStyle: "italic",
+  },
+  item: {
+    color: "#E9E8E8", // Item text color
   },
   gradientBorder: {
     ...StyleSheet.absoluteFillObject,

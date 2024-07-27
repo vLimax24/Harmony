@@ -62,13 +62,24 @@ export const getTeams = authQuery({
 });
 
 export const getMembersForTeam = authQuery({
-  args: { userId: v.id("users"), teamId: v.id("teams") },
+  args: { teamId: v.id("teams") },
   handler: async (ctx, args) => {
-    const teamMembers = ctx.db
+    const teamMembers = await ctx.db
       .query("teamMembers")
-      .withIndex("by_teamId", (q) => q.eq("teamId", args.teamId));
+      .withIndex("by_teamId", (q) => q.eq("teamId", args.teamId))
+      .collect();
 
-    return teamMembers;
+    const userIds = teamMembers.map((teamMember) => teamMember.userId);
+
+    const users = await Promise.all(
+      userIds.map(async (userId) => {
+        const user = await ctx.db.get(userId);
+
+        return user;
+      })
+    );
+
+    return users;
   },
 });
 
@@ -77,16 +88,13 @@ export const getTeamsForUser = authQuery({
   handler: async (ctx) => {
     if (!ctx.user) return [];
 
-    // Query teamMembers table to get the user's teams
     const teamMembers = await ctx.db
       .query("teamMembers")
       .withIndex("by_userId", (q) => q.eq("userId", ctx.user._id))
       .collect();
 
-    // Extract team IDs from the teamMembers
     const teamIds = teamMembers.map((teamMember) => teamMember.teamId);
 
-    // Use Promise.all to fetch all teams in parallel
     const teams = await Promise.all(
       teamIds.map(async (teamId) => {
         return ctx.db.get(teamId);

@@ -8,6 +8,7 @@ import {
   TextCursorInput,
   Share2,
   UserRound,
+  Settings,
 } from "lucide-react-native";
 import { i18n } from "@/lib/i18n";
 import { GradientText } from "@/components/ui/GradientText";
@@ -22,7 +23,7 @@ import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
 import { Image } from "expo-image";
 
-export const index = () => {
+export const Index = () => {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [isScannerOpen, setScannerOpen] = useState(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -30,11 +31,17 @@ export const index = () => {
   const getTeamsForUser = useQuery(api.teams.getTeamsForUser);
   const numberOfMembersForTeams = useQuery(
     api.teamMembers.getNumberOfMembersForMultipleTeams,
-    { teamIds: getTeamsForUser?.map((team) => team._id) }
+    {
+      teamIds: getTeamsForUser?.map((team) => team._id) || [],
+    }
   );
 
   const handleShareTeam = (teamId: Id<"teams">) => {
     router.push(`/dashboard/groups/share/${teamId}`);
+  };
+
+  const handleEditTeam = (teamId: Id<"teams">) => {
+    router.push(`/dashboard/groups/edit/${teamId}`);
   };
 
   const handleOpenPress = () => {
@@ -58,7 +65,6 @@ export const index = () => {
 
   const snapPoints = ["30%"];
 
-  // Create a mapping of teamId to member count
   const memberCountMap = React.useMemo(() => {
     const map = new Map();
     numberOfMembersForTeams?.forEach(({ teamId, members }) => {
@@ -70,18 +76,18 @@ export const index = () => {
   return (
     <View className="flex-1">
       <View className="flex-1">
-        <View className={cn("px-4 pt-12")}>
+        <View className={cn("px-4 pt-12 gap-2")}>
           <Text className="text-textWhite font-bold text-heading">
             {i18n.t("Dashboard.groups.title")}
           </Text>
-          <View className="mb-4">
+          <View className="gap-2">
             {getTeamsForUser &&
               getTeamsForUser.map((team) => {
                 const memberCount = memberCountMap.get(team._id) || 0;
                 return (
                   <View
                     key={team._id}
-                    className="flex-row items-center justify-between bg-backgroundShade px-4 py-5 rounded-[12px] mt-2"
+                    className="flex-row items-center justify-between bg-backgroundShade px-4 py-5 rounded-[12px]"
                   >
                     <View>
                       <Text className="text-textWhite font-bold text-[18px]">
@@ -89,7 +95,7 @@ export const index = () => {
                       </Text>
                       <View className="flex-row gap-2 items-center justify-center mt-0.5">
                         <UserRound color={"#7C7C7C"} size={15} />
-                        <Text className="text-[#7C7C7C] text-[12px]">
+                        <Text className="text-[#7c7c7c] text-[12px]">
                           {memberCount}{" "}
                           {memberCount === 1
                             ? i18n.t("Dashboard.groups.oneGroupMember")
@@ -97,13 +103,26 @@ export const index = () => {
                         </Text>
                       </View>
                     </View>
-                    <TouchableOpacity onPress={() => handleShareTeam(team._id)}>
-                      <GradientIcon
-                        IconComponent={Share2}
-                        isActive={true}
-                        iconSize={20}
-                      />
-                    </TouchableOpacity>
+                    <View className="flex-row gap-2 items-center justify-center py-[6px] px-2 rounded-2xl bg-background">
+                      <TouchableOpacity
+                        onPress={() => handleShareTeam(team._id)}
+                      >
+                        <GradientIcon
+                          IconComponent={Share2}
+                          isActive={true}
+                          iconSize={20}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => handleEditTeam(team._id)}
+                      >
+                        <GradientIcon
+                          IconComponent={Settings}
+                          isActive={true}
+                          iconSize={20}
+                        />
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 );
               })}
@@ -215,4 +234,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default index;
+export default Index;
