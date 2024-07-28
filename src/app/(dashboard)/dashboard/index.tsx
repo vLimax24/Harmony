@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Text,
   View,
@@ -6,23 +6,50 @@ import {
   Animated,
   Dimensions,
 } from "react-native";
-import { useQuery } from "convex/react";
-import { api } from "convex/_generated/api";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Pagination } from "@/components/Home/Pagination";
 import SlideItem from "@/components/Home/SlideItem";
 import { Plus } from "lucide-react-native";
 import { router } from "expo-router";
 import LoadingAnimation from "@/components/loading/LoadingAnimation";
+import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
+import { useTeams } from "@/hooks/useTeams";
+
+const CreateOrJoinTeam = ({ width }) => (
+  <View style={{ width, justifyContent: "center", alignItems: "center" }}>
+    <Text className="text-textWhite font-bold text-xl mb-20">
+      Have no teams yet or want to expand?
+    </Text>
+    <TouchableOpacity
+      className="bg-backgroundShade rounded-full mt-4 p-4"
+      onPress={() => {
+        router.push("/dashboard/groups/create");
+      }}
+    >
+      <Plus color={"#E9E8E8"} size={24} />
+    </TouchableOpacity>
+    <Text className="font-bold text-textWhite mt-2">Create Team</Text>
+  </View>
+);
+
+const TeamItem = ({ item, width }) => (
+  <View style={{ width, justifyContent: "center", alignItems: "center" }}>
+    <SlideItem team={item} />
+  </View>
+);
+
+const renderItem = ({ item, width }) => {
+  if (item._id === "create-or-join") {
+    return <CreateOrJoinTeam width={width} />;
+  }
+  return <TeamItem item={item} width={width} />;
+};
 
 export default function Page() {
   const [selectedTeamIndex, setSelectedTeamIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const scrollX = useRef(new Animated.Value(0)).current;
-  const flatListRef = useRef(null);
   const { width } = Dimensions.get("screen");
-
-  const teams = useQuery(api.teams.getTeamsForUser) || [];
+  const teams = useTeams();
 
   useEffect(() => {
     if (teams.length > 0) {
@@ -30,6 +57,17 @@ export default function Page() {
       scrollX.setValue(selectedTeamIndex * width);
     }
   }, [teams, width, selectedTeamIndex]);
+
+  const data = [
+    ...teams,
+    { _id: "create-or-join", name: "Join or Create a Team" },
+  ];
+
+  const { scrollX, flatListRef, onScrollEnd } = useHorizontalScroll(
+    data,
+    selectedTeamIndex,
+    setSelectedTeamIndex
+  );
 
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
@@ -42,56 +80,6 @@ export default function Page() {
     itemVisiblePercentThreshold: 50,
   };
 
-  const renderItem = ({ item }) => {
-    if (item._id === "create-or-join") {
-      return (
-        <View style={{ width, justifyContent: "center", alignItems: "center" }}>
-          <Text className="text-textWhite font-bold text-xl mb-20">
-            Have no teams yet or want to expand?
-          </Text>
-          <TouchableOpacity
-            className="bg-backgroundShade rounded-full mt-4 p-4"
-            onPress={() => {
-              router.push("/dashboard/groups/create");
-            }}
-          >
-            <Plus color={"#E9E8E8"} size={24} />
-          </TouchableOpacity>
-          <Text className="font-bold text-textWhite mt-2">Create Team</Text>
-        </View>
-      );
-    }
-
-    return (
-      <View style={{ width, justifyContent: "center", alignItems: "center" }}>
-        <SlideItem team={item} />
-      </View>
-    );
-  };
-
-  const data = [
-    ...teams,
-    { _id: "create-or-join", name: "Join or Create a Team" },
-  ];
-
-  const onScrollEnd = useCallback(
-    (event) => {
-      const contentOffsetX = event.nativeEvent.contentOffset.x;
-      const index = Math.round(contentOffsetX / width);
-      const clampedIndex = Math.max(0, Math.min(index, data.length - 1));
-
-      if (clampedIndex !== selectedTeamIndex) {
-        Animated.timing(scrollX, {
-          toValue: clampedIndex * width,
-          duration: 300,
-          useNativeDriver: false,
-        }).start();
-        setSelectedTeamIndex(clampedIndex);
-      }
-    },
-    [width, data.length, scrollX, selectedTeamIndex]
-  );
-
   if (loading) {
     return <LoadingAnimation />;
   }
@@ -101,7 +89,7 @@ export default function Page() {
       <Animated.FlatList
         ref={flatListRef}
         data={data}
-        renderItem={renderItem}
+        renderItem={({ item }) => renderItem({ item, width })}
         keyExtractor={(item) => item._id}
         horizontal
         onScroll={Animated.event(
