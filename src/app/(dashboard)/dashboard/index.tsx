@@ -14,6 +14,7 @@ import { router } from "expo-router";
 import LoadingAnimation from "@/components/loading/LoadingAnimation";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 import { useTeams } from "@/hooks/useTeams";
+import { useExponentialSmoothing } from "@/hooks/useExponentialSmoothing";
 
 const CreateOrJoinTeam = ({ width }) => (
   <View style={{ width, justifyContent: "center", alignItems: "center" }}>
@@ -51,23 +52,26 @@ export default function Page() {
   const { width } = Dimensions.get("screen");
   const teams = useTeams();
 
-  useEffect(() => {
-    if (teams.length > 0) {
-      setLoading(false);
-      scrollX.setValue(selectedTeamIndex * width);
-    }
-  }, [teams, width, selectedTeamIndex]);
-
   const data = [
     ...teams,
     { _id: "create-or-join", name: "Join or Create a Team" },
   ];
 
-  const { scrollX, flatListRef, onScrollEnd } = useHorizontalScroll(
-    data,
-    selectedTeamIndex,
-    setSelectedTeamIndex
+  const { animatedValue: scrollX, smoothScroll } = useExponentialSmoothing(
+    0,
+    0.1
   );
+
+  const flatListRef = useRef(null);
+
+  const onScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+    { useNativeDriver: false }
+  );
+
+  const onScrollEnd = () => {
+    // Optional: Handle any actions when scroll ends
+  };
 
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
@@ -79,6 +83,13 @@ export default function Page() {
   const viewabilityConfig = {
     itemVisiblePercentThreshold: 50,
   };
+
+  useEffect(() => {
+    if (teams.length > 0) {
+      setLoading(false);
+      smoothScroll(selectedTeamIndex * width); // Start with the initial index
+    }
+  }, [teams, width, selectedTeamIndex, smoothScroll]);
 
   if (loading) {
     return <LoadingAnimation />;
@@ -92,10 +103,7 @@ export default function Page() {
         renderItem={({ item }) => renderItem({ item, width })}
         keyExtractor={(item) => item._id}
         horizontal
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: false }
-        )}
+        onScroll={onScroll}
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onViewableItemsChanged={onViewableItemsChanged}
