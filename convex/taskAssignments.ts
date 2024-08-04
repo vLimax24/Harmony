@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { authMutation, authQuery } from "./util";
 import { Doc } from "./_generated/dataModel";
+import { ConvexError } from "convex/values";
 
 export const assignTaskToMember = authMutation({
   args: { taskId: v.id("tasks"), userId: v.id("users"), teamId: v.id("teams") },
@@ -44,18 +45,17 @@ export const getTaskAssignmentForDay = authQuery({
 
     const userTaskIds = userAssignments.map((assignment) => assignment.taskId);
 
-    if (userTaskIds.length === 0) return [];
-
     const getWeekdayNumber = () => {
       const date = new Date();
       const weekDay = date.getDay();
-      return weekDay;
+      return weekDay === 0 ? 7 : weekDay;
     };
 
     const weekdayNumber = getWeekdayNumber();
-    const weekdayTasksQuery = ctx.db
+    const weekdayTasksQuery = await ctx.db
       .query("tasks")
-      .withIndex("by_weekday", (q) => q.eq("weekday", weekdayNumber));
+      .withIndex("by_weekday", (q) => q.eq("weekday", weekdayNumber))
+      .collect();
 
     let tasksForDay = [];
     for await (const task of weekdayTasksQuery) {

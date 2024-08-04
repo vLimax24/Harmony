@@ -12,14 +12,15 @@ import SlideItem from "@/components/Home/SlideItem";
 import { Plus } from "lucide-react-native";
 import { router } from "expo-router";
 import LoadingAnimation from "@/components/loading/LoadingAnimation";
-import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 import { useTeams } from "@/hooks/useTeams";
 import { useExponentialSmoothing } from "@/hooks/useExponentialSmoothing";
+import { i18n } from "@/lib/i18n";
+import { Doc } from "convex/_generated/dataModel";
 
 const CreateOrJoinTeam = ({ width }) => (
   <View style={{ width, justifyContent: "center", alignItems: "center" }}>
-    <Text className="text-textWhite font-bold text-xl mb-20">
-      Have no teams yet or want to expand?
+    <Text className="text-textWhite font-bold text-xl mb-20 text-center px-4">
+      {i18n.t("Dashboard.home.createOrJoinTeam.title")}
     </Text>
     <TouchableOpacity
       className="bg-backgroundShade rounded-full mt-4 p-4"
@@ -29,7 +30,9 @@ const CreateOrJoinTeam = ({ width }) => (
     >
       <Plus color={"#E9E8E8"} size={24} />
     </TouchableOpacity>
-    <Text className="font-bold text-textWhite mt-2">Create Team</Text>
+    <Text className="font-bold text-textWhite mt-2">
+      {i18n.t("Dashboard.home.createOrJoinTeam.createTeam")}
+    </Text>
   </View>
 );
 
@@ -39,11 +42,11 @@ const TeamItem = ({ item, width }) => (
   </View>
 );
 
-const renderItem = ({ item, width }) => {
+const renderItem = ({ item, width }: { item: any; width: number }) => {
   if (item._id === "create-or-join") {
     return <CreateOrJoinTeam width={width} />;
   }
-  return <TeamItem item={item} width={width} />;
+  return <TeamItem item={item} width={width} key={item._id} />;
 };
 
 export default function Page() {
@@ -87,7 +90,7 @@ export default function Page() {
   useEffect(() => {
     if (teams.length > 0) {
       setLoading(false);
-      smoothScroll(selectedTeamIndex * width); // Start with the initial index
+      smoothScroll(selectedTeamIndex * width);
     }
   }, [teams, width, selectedTeamIndex, smoothScroll]);
 

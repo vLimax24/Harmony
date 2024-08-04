@@ -1,6 +1,12 @@
 // index.js
 import React, { useRef, useState } from "react";
-import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import {
   Plus,
   UsersRound,
@@ -74,7 +80,7 @@ export const Index = () => {
   }, [numberOfMembersForTeams]);
 
   return (
-    <View className="flex-1">
+    <ScrollView className="flex-1">
       <View className="flex-1">
         <View className={cn("px-4 pt-12 gap-2")}>
           <Text className="text-textWhite font-bold text-heading">
@@ -223,7 +229,7 @@ export const Index = () => {
           <BarcodeScanner onCancel={handleScannerClose} />
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 

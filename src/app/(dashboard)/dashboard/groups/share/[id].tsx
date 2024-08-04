@@ -7,7 +7,6 @@ import QRCODE from "@/components/QRCode/QRCodeGenerator";
 
 const ShareGroup = () => {
   const { id } = useLocalSearchParams();
-  console.log(id);
 
   return (
     <View className="flex-1 items-center justify-center">

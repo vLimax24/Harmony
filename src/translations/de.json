@@ -66,11 +66,16 @@
       "noTasksAssigned": "Noch keine Aufgaben zugewiesen",
       "markAsCompleteButton": "Fertig",
       "selectTeam": "Wähle eine Gruppe aus",
+      "taskCompleted": "Aufgabe erledigt",
       "backButton": "Zurück",
       "nextButton": "Weiter",
       "previousButton": "Zurück",
       "noTeamsAvailable": "Keine Gruppen verfügbar",
-      "signOutButton": "Abmelden"
+      "signOutButton": "Abmelden",
+      "createOrJoinTeam": {
+        "title": "Hast du noch keine Gruppen oder willst du eine erstellen?",
+        "createTeam": "Team erstellen"
+      }
     }
   }
 }

@@ -30,9 +30,12 @@ import {
   Bone,
   Plus,
 } from "lucide-react-native";
+import { TeamnameForm } from "@/components/createTeam/TeamnameForm";
 import { i18n } from "@/lib/i18n";
 import { useMutation } from "convex/react";
 import { api } from "convex/_generated/api";
+import { FormHeader } from "@/components/createTeam/FormHeader";
+import { AssignmentAlert } from "@/components/createTeam/AssignmentAlert";
 
 const weekdays = [
   i18n.t("Dashboard.groups.createGroup.weekdays.monday"),
@@ -97,8 +100,10 @@ const Index = () => {
   const [selectedDay, setSelectedDay] = useState(null);
   const [tasks, setTasks] = useState({});
   const [teamName, setTeamName] = useState("");
-  const [teamNameError, setTeamNameError] = useState("");
+  const [teamNameError, setTeamNameError] = useState(false);
+  const [wasSubmitted, setWasSubmitted] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState(null);
+  const [isTeamNameValid, setIsTeamNameValid] = useState(false);
   const bottomSheetRef = useRef(null);
   const snapPoints = ["65%"];
 
@@ -112,7 +117,6 @@ const Index = () => {
     reset,
     setValue,
     getValues,
-    trigger,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -135,10 +139,6 @@ const Index = () => {
   };
 
   const handleCreateTeam = async (taskIds) => {
-    if (!validateTeamName(teamName)) {
-      return;
-    }
-
     const createdTeamId = await createTeam({
       name: teamName,
       tasks: taskIds,
@@ -184,8 +184,11 @@ const Index = () => {
   };
 
   const handleSubmitForm = async () => {
+    setWasSubmitted(true);
+    if (!isTeamNameValid) return;
+
     const taskIds = await handleSubmitTasks();
-    if (!taskIds) return;
+    if (!taskIds) return setWasSubmitted(false);
     const teamId = await handleCreateTeam(taskIds);
     if (teamId) {
       await addOwnUserToTeam({ teamId: teamId });
@@ -200,26 +203,6 @@ const Index = () => {
     setEditingTaskId(index);
     setSheetOpen(true);
     bottomSheetRef.current?.expand();
-  };
-
-  const validateTeamName = (name) => {
-    if (!name) {
-      setTeamNameError(i18n.t("Dashboard.groups.createGroup.errors.teamName"));
-      return false;
-    } else if (name.length < 3) {
-      setTeamNameError(
-        i18n.t("Dashboard.groups.createGroup.errors.teamMinLength")
-      );
-      return false;
-    } else if (name.length > 20) {
-      setTeamNameError(
-        i18n.t("Dashboard.groups.createGroup.errors.teamMaxLength")
-      );
-      return false;
-    } else {
-      setTeamNameError("");
-      return true;
-    }
   };
 
   const handleDeleteTask = (day, index) => {
@@ -284,87 +267,16 @@ const Index = () => {
             gap: 40,
           }}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <TouchableOpacity
-              style={{ padding: 10 }}
-              onPress={() => router.push("/dashboard/groups")}
-              disabled={sheetOpen}
-            >
-              <ArrowLeft size={24} color={"#E9E8E8"} />
-            </TouchableOpacity>
-            <Text
-              style={{
-                flex: 1,
-                textAlign: "center",
-                marginRight: 10,
-                color: "#E9E8E8",
-                fontSize: 16,
-                fontWeight: "bold",
-              }}
-            >
-              {i18n.t("Dashboard.groups.createButton")}
-            </Text>
-          </View>
-          <View style={{ gap: 8 }}>
-            <Text
-              style={{ color: "#E9E8E8", fontWeight: "bold", fontSize: 15 }}
-            >
-              {i18n.t("Dashboard.groups.createGroup.labelName")}
-            </Text>
-            <TextInput
-              cursorColor={"#E9E8E8"}
-              placeholderTextColor={"#E9E8E8"}
-              placeholder={i18n.t(
-                "Dashboard.groups.createGroup.placeholderName"
-              )}
-              style={{
-                backgroundColor: "#1D1F24",
-                paddingHorizontal: 16,
-                paddingVertical: 12,
-                borderRadius: 12,
-                color: "#E9E8E8",
-              }}
-              editable={!sheetOpen}
-              onChangeText={(teamName) => {
-                setTeamName(teamName);
-              }}
-              value={teamName}
-            />
-            {teamNameError ? (
-              <Text style={styles.errorText}>{teamNameError}</Text>
-            ) : null}
-          </View>
-          <View style={{ gap: 16 }}>
-            <Text
-              style={{ color: "#E9E8E8", fontWeight: "bold", fontSize: 15 }}
-            >
-              {i18n.t("Dashboard.groups.createGroup.labelTasks")}
-            </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 16,
-                padding: 16,
-                backgroundColor: "#1D1F24",
-                borderRadius: 12,
-              }}
-            >
-              <TriangleAlert color={"#FF6D6D"} size={24} />
-              <Text
-                style={{ color: "#E9E8E8", fontSize: 12, fontWeight: "bold" }}
-              >
-                {i18n.t("Dashboard.groups.createGroup.alertMessage")}
-              </Text>
-            </View>
-          </View>
+          <FormHeader sheetOpen={sheetOpen} />
+          <TeamnameForm
+            teamName={teamName}
+            setTeamName={setTeamName}
+            sheetOpen={sheetOpen}
+            setTeamNameSubmitError={setTeamNameError}
+            onValidationChange={(isValid) => setIsTeamNameValid(isValid)}
+            isSubmitted={wasSubmitted}
+          />
+          <AssignmentAlert />
 
           {weekdays.map((day) => (
             <View key={day} style={{ marginBottom: 16, gap: 4 }}>
