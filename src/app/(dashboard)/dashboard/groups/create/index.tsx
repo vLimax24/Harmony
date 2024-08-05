@@ -118,13 +118,9 @@ const Index = () => {
 
       <TaskBottomSheet
         bottomSheetRef={bottomSheetRef}
-        sheetOpen={sheetOpen}
-        setSheetOpen={setSheetOpen}
-        selectedDay={selectedDay}
         setSelectedDay={setSelectedDay}
         control={control}
         handleSubmit={handleSubmit}
-        reset={reset}
         errors={errors}
         setValue={setValue}
         getValues={getValues}

@@ -14,16 +14,16 @@
   },
   "Dashboard": {
     "groups": {
-      "title": "Gruppen",
-      "createButton": "Gruppe erstellen",
-      "editButton": "Gruppe bearbeiten",
-      "joinButton": "Gruppe beitreten",
+      "title": "Teams",
+      "createButton": "Team erstellen",
+      "editButton": "Team bearbeiten",
+      "joinButton": "Team beitreten",
       "oneGroupMember": "Person",
       "mutipleGroupMembers": "Personen",
       "joinWithQRCode": "Mit QR-Code beitreten",
       "joinWithCode": "Mit Code beitreten",
       "QRCodeHint": "Scanne den QR-Code",
-      "joinTeamConfirmation": "Möchtest du der Gruppe {{name}} beitreten?",
+      "joinTeamConfirmation": "Möchtest du dem Team {{name}} beitreten?",
       "joinTeam": "Beitreten",
       "cancel": "Abbrechen",
       "createGroup": {
@@ -65,15 +65,15 @@
     "home": {
       "noTasksAssigned": "Noch keine Aufgaben zugewiesen",
       "markAsCompleteButton": "Fertig",
-      "selectTeam": "Wähle eine Gruppe aus",
+      "selectTeam": "Wähle ein Team aus",
       "taskCompleted": "Aufgabe erledigt",
       "backButton": "Zurück",
       "nextButton": "Weiter",
       "previousButton": "Zurück",
-      "noTeamsAvailable": "Keine Gruppen verfügbar",
+      "noTeamsAvailable": "Keine Teams verfügbar",
       "signOutButton": "Abmelden",
       "createOrJoinTeam": {
-        "title": "Hast du noch keine Gruppen oder willst du eine erstellen?",
+        "title": "Hast du noch keine Teams oder willst du eins erstellen?",
         "createTeam": "Team erstellen"
       }
     }

@@ -8,7 +8,10 @@ import {
   Keyboard,
   FlatList,
 } from "react-native";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetScrollView,
+  BottomSheetBackdrop,
+} from "@gorhom/bottom-sheet";
 import { useForm, Controller } from "react-hook-form";
 import { LinearGradient } from "expo-linear-gradient";
 import { Trash2, Pencil, Plus } from "lucide-react-native";
@@ -61,13 +64,9 @@ const getIconComponent = (iconName, size) => {
 };
 
 export const TaskBottomSheet = ({
-  sheetOpen,
-  setSheetOpen,
-  selectedDay,
   setSelectedDay,
   control,
   handleSubmit,
-  reset,
   errors,
   setValue,
   getValues,
@@ -99,19 +98,29 @@ export const TaskBottomSheet = ({
 
   return (
     <>
-      {sheetOpen && <View style={styles.overlay} />}
-
       <BottomSheet
         ref={bottomSheetRef}
         index={-1}
         snapPoints={snapPoints}
         onClose={() => {
           setSelectedDay(null);
-          setSheetOpen(false);
         }}
         enablePanDownToClose={true}
         backgroundStyle={{ backgroundColor: "#1D1F24" }}
         handleIndicatorStyle={{ backgroundColor: "#E9E8E8" }}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.5}
+            enableTouchThrough={false}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            style={[
+              { backgroundColor: "rgba(0, 0, 0, 1)" },
+              StyleSheet.absoluteFillObject,
+            ]}
+          />
+        )}
       >
         <BottomSheetScrollView contentContainerStyle={{ padding: 16 }}>
           <Text

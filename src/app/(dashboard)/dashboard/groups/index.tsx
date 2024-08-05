@@ -20,17 +20,18 @@ import { i18n } from "@/lib/i18n";
 import { GradientText } from "@/components/ui/GradientText";
 import { GradientIcon } from "@/components/ui/GradientIcon";
 import { router } from "expo-router";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from "@gorhom/bottom-sheet";
 import { cn } from "@/lib/utils";
 import BarcodeScanner from "@/components/ui/BarcodeScanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
-import { Image } from "expo-image";
 
 export const Index = () => {
-  const [sheetOpen, setSheetOpen] = useState(false);
   const [isScannerOpen, setScannerOpen] = useState(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -51,12 +52,7 @@ export const Index = () => {
   };
 
   const handleOpenPress = () => {
-    setSheetOpen(true);
     bottomSheetRef.current?.expand();
-  };
-
-  const handleSheetClose = () => {
-    setSheetOpen(false);
   };
 
   const handleScannerOpen = async () => {
@@ -80,7 +76,7 @@ export const Index = () => {
   }, [numberOfMembersForTeams]);
 
   return (
-    <ScrollView className="flex-1">
+    <View className="flex-1">
       <View className="flex-1">
         <View className={cn("px-4 pt-12 gap-2")}>
           <Text className="text-textWhite font-bold text-heading">
@@ -133,7 +129,7 @@ export const Index = () => {
                 );
               })}
           </View>
-          <View className="w-full flex-row gap-2">
+          <View className="w-full flex-row gap-2 mb-5">
             <TouchableOpacity
               activeOpacity={0.8}
               className="bg-backgroundShade rounded-[10px] py-3 flex-1 flex items-center justify-center"
@@ -168,15 +164,25 @@ export const Index = () => {
         </View>
       </View>
 
-      {sheetOpen && <View style={styles.overlay} pointerEvents="none" />}
-
       <BottomSheet
         snapPoints={snapPoints}
         ref={bottomSheetRef}
         enablePanDownToClose={true}
         index={-1}
-        onClose={handleSheetClose}
         backgroundStyle={{ backgroundColor: "#1D1F24" }}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.5}
+            enableTouchThrough={false}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            style={[
+              { backgroundColor: "rgba(0, 0, 0, 1)" },
+              StyleSheet.absoluteFillObject,
+            ]}
+          />
+        )}
       >
         <BottomSheetView className="px-6 py-3 justify-between h-[90%]">
           <Text className="text-textWhite font-bold text-[17px] mb-4">
@@ -229,15 +235,8 @@ export const Index = () => {
           <BarcodeScanner onCancel={handleScannerClose} />
         </View>
       )}
-    </ScrollView>
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-  },
-});
 
 export default Index;
