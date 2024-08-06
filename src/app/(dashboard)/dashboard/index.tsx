@@ -88,8 +88,8 @@ export default function Page() {
   };
 
   useEffect(() => {
+    setLoading(false);
     if (teams.length > 0) {
-      setLoading(false);
       smoothScroll(selectedTeamIndex * width);
     }
   }, [teams, width, selectedTeamIndex, smoothScroll]);

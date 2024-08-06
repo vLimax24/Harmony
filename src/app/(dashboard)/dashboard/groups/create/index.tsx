@@ -1,24 +1,15 @@
 import React, { useState, useRef } from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  Keyboard,
-  ScrollView,
-} from "react-native";
-import { useRouter } from "expo-router";
+import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import { GradientText } from "@/components/ui/GradientText";
-import { useForm } from "react-hook-form";
 import { Trash2, Pencil, Plus } from "lucide-react-native";
 import { TaskBottomSheet } from "@/components/createTeam/TaskBottomSheet";
 import { TeamnameForm } from "@/components/createTeam/TeamnameForm";
 import { i18n } from "@/lib/i18n";
-import { useMutation } from "convex/react";
-import { api } from "convex/_generated/api";
 import { FormHeader } from "@/components/createTeam/FormHeader";
 import { AssignmentAlert } from "@/components/createTeam/AssignmentAlert";
 import { getIconComponent } from "@/lib/getIconComponent";
 import { useTeamForm } from "@/hooks/useTeamForm";
+import { weekdays } from "@/lib/helpers";
 
 const iconData = [
   {
@@ -36,16 +27,6 @@ const iconData = [
   { name: "CookingPot", icon: (size) => getIconComponent("CookingPot", size) },
   { name: "Stamp", icon: (size) => getIconComponent("Stamp", size) },
   { name: "Bone", icon: (size) => getIconComponent("Bone", size) },
-];
-
-const weekdays = [
-  i18n.t("Dashboard.groups.createGroup.weekdays.monday"),
-  i18n.t("Dashboard.groups.createGroup.weekdays.tuesday"),
-  i18n.t("Dashboard.groups.createGroup.weekdays.wednesday"),
-  i18n.t("Dashboard.groups.createGroup.weekdays.thursday"),
-  i18n.t("Dashboard.groups.createGroup.weekdays.friday"),
-  i18n.t("Dashboard.groups.createGroup.weekdays.saturday"),
-  i18n.t("Dashboard.groups.createGroup.weekdays.sunday"),
 ];
 
 const Index = () => {
