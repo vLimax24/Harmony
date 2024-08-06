@@ -20,9 +20,8 @@ export const useExponentialSmoothing = (
 
       lastScrollX.current = newValue;
 
-      Animated.timing(animatedValue, {
+      Animated.spring(animatedValue, {
         toValue: newValue,
-        duration: 0, // Instant update
         useNativeDriver: false,
       }).start();
     },

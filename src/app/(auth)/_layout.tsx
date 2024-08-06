@@ -5,7 +5,7 @@ export default function AuthRoutesLayout() {
   const { isSignedIn } = useAuth();
 
   if (isSignedIn) {
-    return <Redirect href={"/dashboard/groups"} />;
+    return <Redirect href={"/dashboard/profile"} />;
   }
 
   return <Slot />;

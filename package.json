@@ -15,6 +15,7 @@
     "@gorhom/bottom-sheet": "^4.6.3",
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-masked-view/masked-view": "0.3.1",
+    "@react-native-picker/picker": "2.7.5",
     "@types/react-native-snap-carousel": "^3.8.11",
     "clsx": "^2.1.1",
     "convex": "^1.13.0",
@@ -25,11 +26,13 @@
     "expo-blur": "^13.0.2",
     "expo-camera": "~15.0.13",
     "expo-constants": "~16.0.1",
+    "expo-device": "~6.0.2",
     "expo-haptics": "^13.0.1",
     "expo-image": "^1.12.12",
     "expo-linear-gradient": "~13.0.2",
     "expo-linking": "~6.3.1",
     "expo-localization": "^15.0.3",
+    "expo-notifications": "~0.28.15",
     "expo-router": "~3.5.9",
     "expo-secure-store": "^13.0.2",
     "expo-splash-screen": "~0.27.4",
@@ -56,8 +59,7 @@
     "react-native-web": "~0.19.10",
     "svix": "^1.24.0",
     "tailwind-merge": "^2.4.0",
-    "tailwindcss": "^3.4.0",
-    "@react-native-picker/picker": "2.7.5"
+    "tailwindcss": "^3.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -84,5 +84,12 @@
         "createTeam": "Team erstellen"
       }
     }
+  },
+  "Profile": {
+    "title": "Mein Profil",
+    "notifications": {
+      "title": "Benachrichtugngen",
+      "description": "Erhalte Benachrichtungen über Erinnerungen zu anstehenden Aufgaben und Teamevents"
+    }
   }
 }

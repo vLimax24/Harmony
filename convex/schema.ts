@@ -8,6 +8,7 @@ export default defineSchema({
     username: v.optional(v.string()),
     profileImage: v.optional(v.string()),
     clerkId: v.string(),
+    notifications: v.boolean(),
   })
     .searchIndex("search_username", {
       searchField: "username",
