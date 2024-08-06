@@ -6,9 +6,9 @@ const QRCODE = ({ value }: { value: string }) => {
     <QRCode
       value={value}
       size={175}
-      color="black"
-      backgroundColor="white"
-      ecl="L"
+      color="white"
+      backgroundColor="transparent"
+      ecl="H"
     />
   );
 };

@@ -13,8 +13,11 @@
     "groups": "Gruppen"
   },
   "Dashboard": {
+    "comingSoon": "Demnächst!",
     "groups": {
       "title": "Teams",
+      "joinTeamQRCodeScanInAppAlert": "Damit der QR-Code korrekt funktioniert, muss die Person den QR-Code in der App scannen!",
+      "noTeamsFound": "Noch keine Teams",
       "createButton": "Team erstellen",
       "editButton": "Team bearbeiten",
       "joinButton": "Team beitreten",
@@ -59,6 +62,10 @@
           "frequencyMin": "Die Häufigkeit muss größer oder gleich als 1 sein",
           "frequencyMax": "Die Häufigkeit darf nicht größer als 10 sein"
         }
+      },
+      "shareGroup": {
+        "helperText1": "Lade deine Freunde einfach und sicher via QR-Code ein",
+        "helperText2": "Lasse den QR-Code einfach von deinen Freunden in der Harmony App scannen und lade sie einfach in die Gruppe ein"
       },
       "editGroup": {}
     },

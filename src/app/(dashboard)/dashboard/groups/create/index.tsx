@@ -33,23 +33,16 @@ const Index = () => {
   const {
     control,
     handleSubmit,
-    reset,
     setValue,
     getValues,
     errors,
     tasks,
-    setTasks,
     teamName,
     setTeamName,
-    teamNameError,
     setTeamNameError,
     wasSubmitted,
-    setWasSubmitted,
-    isTeamNameValid,
     setIsTeamNameValid,
     sheetOpen,
-    setSheetOpen,
-    selectedDay,
     setSelectedDay,
     bottomSheetRef,
     handleAddTask,
@@ -81,7 +74,6 @@ const Index = () => {
             isSubmitted={wasSubmitted}
           />
           <AssignmentAlert />
-
           {weekdays.map((day) => (
             <DayTasks
               key={day}

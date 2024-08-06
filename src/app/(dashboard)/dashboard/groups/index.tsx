@@ -1,4 +1,3 @@
-// index.js
 import React, { useRef, useState } from "react";
 import {
   Text,
@@ -83,7 +82,8 @@ export const Index = () => {
             {i18n.t("Dashboard.groups.title")}
           </Text>
           <View className="gap-2">
-            {getTeamsForUser &&
+            {getTeamsForUser && getTeamsForUser.length > 0 ? (
+              getTeamsForUser &&
               getTeamsForUser.map((team) => {
                 const memberCount = memberCountMap.get(team._id) || 0;
                 return (
@@ -127,7 +127,14 @@ export const Index = () => {
                     </View>
                   </View>
                 );
-              })}
+              })
+            ) : (
+              <View className="my-10 justify-center">
+                <Text className="font-bold text-textWhite text-3xl">
+                  {i18n.t("Dashboard.groups.noTeamsFound")}
+                </Text>
+              </View>
+            )}
           </View>
           <View className="w-full flex-row gap-2 mb-5">
             <TouchableOpacity
@@ -206,18 +213,26 @@ export const Index = () => {
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.8}
-              className="bg-background gap-4 px-8 text-[13px] flex-row rounded-[10px] py-3 flex-1 flex items-center justify-start"
+              className="bg-background relative gap-4 px-8 text-[13px] flex-row rounded-[10px] py-3 flex-1 flex items-center justify-start"
               onPress={handleOpenPress}
+              disabled={true}
             >
-              <GradientIcon
-                IconComponent={TextCursorInput}
-                isActive={true}
-                iconSize={20}
-              />
-              <GradientText
-                text={i18n.t("Dashboard.groups.joinWithCode")}
-                className="text-[12px] font-bold"
-              />
+              <View className="absolute top-3 right-0 bottom-0 rotate-[20deg] bg-[#5c5c5c] h-7 opacity-100 rounded-full items-center justify-center px-2">
+                <Text className="text-sm text-textWhite">
+                  {i18n.t("Dashboard.comingSoon")}
+                </Text>
+              </View>
+              <View className="flex-row gap-4 opacity-50">
+                <GradientIcon
+                  IconComponent={TextCursorInput}
+                  isActive={true}
+                  iconSize={20}
+                />
+                <GradientText
+                  text={i18n.t("Dashboard.groups.joinWithCode")}
+                  className="text-[12px] font-bold"
+                />
+              </View>
             </TouchableOpacity>
           </View>
         </BottomSheetView>
